@@ -4,8 +4,19 @@ import { Resend } from "resend";
 import { getDb } from "@/lib/firebaseAdmin";
 
 export const runtime = "nodejs";
-const LEAD_NOTIFICATION_TO = "quinnytrott@gmail.com";
-const LEAD_NOTIFICATION_FROM = "Q2 Leads <onboarding@resend.dev>";
+const LEAD_NOTIFICATION_TO =
+  process.env.NOTIFICATION_EMAIL || "quinnytrott@gmail.com";
+
+const LEAD_NOTIFICATION_FROM =
+  process.env.LEAD_NOTIFICATION_FROM ||
+  "Q2 Leads <leads@quickandqualified.ca>";
+
+if (process.env.NODE_ENV === "development") {
+  console.log("Lead email config:", {
+    to: LEAD_NOTIFICATION_TO,
+    from: LEAD_NOTIFICATION_FROM,
+  });
+}
 
 type LeadPayload = {
   name: string;
