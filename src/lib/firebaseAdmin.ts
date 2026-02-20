@@ -1,6 +1,7 @@
 import "server-only";
 import { cert, getApps, initializeApp, type App } from "firebase-admin/app";
 import { getFirestore, type Firestore } from "firebase-admin/firestore";
+import { getStorage } from "firebase-admin/storage";
 
 type FirebaseAdminState = {
   app?: App;
@@ -31,6 +32,7 @@ function getFirebaseAdminConfig(): {
   projectId: string;
   clientEmail: string;
   privateKey: string;
+  storageBucket: string;
 } {
   logEnvPresence();
 
@@ -49,11 +51,39 @@ function getFirebaseAdminConfig(): {
     );
   }
 
+  const resolvedProjectId = projectId as string;
+
   return {
-    projectId: projectId as string,
+    projectId: resolvedProjectId,
     clientEmail: clientEmail as string,
     privateKey: privateKey as string,
+    storageBucket:
+      process.env.FIREBASE_STORAGE_BUCKET || `${resolvedProjectId}.appspot.com`,
   };
+}
+
+function getFirebaseAdminApp(): App {
+  if (firebaseState.app) {
+    return firebaseState.app;
+  }
+
+  const existingApp = getApps()[0];
+  if (existingApp) {
+    firebaseState.app = existingApp;
+    return existingApp;
+  }
+
+  const config = getFirebaseAdminConfig();
+  const app = initializeApp({
+    credential: cert({
+      projectId: config.projectId,
+      clientEmail: config.clientEmail,
+      privateKey: config.privateKey,
+    }),
+    storageBucket: config.storageBucket,
+  });
+  firebaseState.app = app;
+  return app;
 }
 
 export function getDb(): Firestore {
@@ -61,15 +91,27 @@ export function getDb(): Firestore {
     return firebaseState.db;
   }
 
-  const existingApp = getApps()[0];
-  const app =
-    existingApp ??
-    firebaseState.app ??
-    initializeApp({
-      credential: cert(getFirebaseAdminConfig()),
-    });
-  firebaseState.app = app;
-
-  firebaseState.db = getFirestore(app);
+  firebaseState.db = getFirestore(getFirebaseAdminApp());
   return firebaseState.db;
+}
+
+export function getStorageBucket() {
+  const app = getFirebaseAdminApp();
+  const fallbackProjectId =
+    process.env.FIREBASE_PROJECT_ID ||
+    (typeof app.options.projectId === "string" ? app.options.projectId : "");
+  const bucketName =
+    process.env.FIREBASE_STORAGE_BUCKET ||
+    (typeof app.options.storageBucket === "string"
+      ? app.options.storageBucket
+      : "") ||
+    (fallbackProjectId ? `${fallbackProjectId}.appspot.com` : "");
+
+  if (!bucketName) {
+    throw new Error(
+      "Missing storage bucket configuration. Set FIREBASE_STORAGE_BUCKET or FIREBASE_PROJECT_ID.",
+    );
+  }
+
+  return getStorage(app).bucket(bucketName);
 }

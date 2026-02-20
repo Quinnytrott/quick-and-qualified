@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { FieldValue } from "firebase-admin/firestore";
 import { Resend } from "resend";
-import { getDb } from "@/lib/firebaseAdmin";
+import { getDb, getStorageBucket } from "@/lib/firebaseAdmin";
 
 export const runtime = "nodejs";
 const LEAD_NOTIFICATION_TO =
@@ -10,6 +10,8 @@ const LEAD_NOTIFICATION_TO =
 const LEAD_NOTIFICATION_FROM =
   process.env.LEAD_NOTIFICATION_FROM ||
   "Q2 Leads <leads@quickandqualified.ca>";
+
+const SIGNED_URL_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 
 if (process.env.NODE_ENV === "development") {
   console.log("Lead email config:", {
@@ -24,12 +26,18 @@ type LeadPayload = {
   phone: string;
   address: string;
   jobType: string;
-  message?: string;
   notes: string;
-  filePath?: string;
 };
 
-function asTrimmedString(value: unknown): string {
+type LeadAttachment = {
+  name: string;
+  path: string;
+  url: string;
+  contentType: string;
+  size: number;
+};
+
+function asTrimmedString(value: FormDataEntryValue | null): string {
   return typeof value === "string" ? value.trim() : "";
 }
 
@@ -42,23 +50,83 @@ function escapeHtml(value: string): string {
     .replace(/'/g, "&#39;");
 }
 
+function toSafeFilename(filename: string): string {
+  const sanitized = filename
+    .trim()
+    .replace(/[\\/]/g, "-")
+    .replace(/[^a-zA-Z0-9._-]/g, "_");
+
+  return sanitized || "upload";
+}
+
+async function uploadLeadAttachments(
+  files: FormDataEntryValue[],
+  leadId: string,
+): Promise<LeadAttachment[]> {
+  const validFiles = files.filter(
+    (entry): entry is File => entry instanceof File && entry.size > 0,
+  );
+
+  if (validFiles.length === 0) {
+    return [];
+  }
+
+  const bucket = getStorageBucket();
+  const attachments: LeadAttachment[] = [];
+
+  for (const file of validFiles) {
+    const safeFilename = toSafeFilename(file.name);
+    const path = `leads/${leadId}/${Date.now()}-${safeFilename}`;
+    const bytes = Buffer.from(await file.arrayBuffer());
+    const contentType = file.type || "application/octet-stream";
+    const bucketFile = bucket.file(path);
+
+    await bucketFile.save(bytes, { contentType });
+
+    const [url] = await bucketFile.getSignedUrl({
+      action: "read",
+      expires: Date.now() + SIGNED_URL_TTL_MS,
+    });
+
+    attachments.push({
+      name: file.name || safeFilename,
+      path,
+      url,
+      contentType,
+      size: file.size,
+    });
+  }
+
+  return attachments;
+}
+
 async function sendLeadNotification(params: {
   lead: LeadPayload;
   createdAtIso: string;
   leadId: string;
-  filePath: string;
+  attachments: LeadAttachment[];
 }) {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
     throw new Error("Missing RESEND_API_KEY.");
   }
 
-  const { lead, createdAtIso, leadId, filePath } = params;
+  const { lead, createdAtIso, leadId, attachments } = params;
   const resend = new Resend(apiKey);
   const projectId = process.env.FIREBASE_PROJECT_ID;
   const firestoreLink = projectId
     ? `https://console.firebase.google.com/project/${projectId}/firestore/data/~2Fleads~2F${leadId}`
     : null;
+
+  const photosHtml =
+    attachments.length > 0
+      ? `<ul style="margin:8px 0 0 18px;padding:0;">${attachments
+          .map(
+            (attachment) =>
+              `<li style="margin:0 0 6px;"><a href="${escapeHtml(attachment.url)}">${escapeHtml(attachment.name)}</a></li>`,
+          )
+          .join("")}</ul>`
+      : `<p style="margin:8px 0 0;">—</p>`;
 
   const html = `
     <h2 style="margin:0 0 12px;">New Q2 Lead</h2>
@@ -70,9 +138,10 @@ async function sendLeadNotification(params: {
       <tr><td><strong>Address</strong></td><td>${escapeHtml(lead.address)}</td></tr>
       <tr><td><strong>Job Type</strong></td><td>${escapeHtml(lead.jobType)}</td></tr>
       <tr><td><strong>Message</strong></td><td>${escapeHtml(lead.notes || "—")}</td></tr>
-      <tr><td><strong>File Path</strong></td><td>${escapeHtml(filePath || "—")}</td></tr>
       <tr><td><strong>Created At</strong></td><td>${escapeHtml(createdAtIso)}</td></tr>
     </table>
+    <h3 style="margin:16px 0 0;">Photos</h3>
+    ${photosHtml}
     ${
       firestoreLink
         ? `<p style="margin:16px 0 0;"><a href="${firestoreLink}">Open in Firestore</a></p>`
@@ -94,26 +163,26 @@ export async function POST(request: Request) {
     console.log("HAS RESEND?", !!process.env.RESEND_API_KEY);
   }
 
-  let body: Partial<LeadPayload>;
-
+  let form: FormData;
   try {
-    body = (await request.json()) as Partial<LeadPayload>;
+    form = await request.formData();
   } catch {
     return NextResponse.json(
-      { success: false, message: "Invalid request body." },
+      { success: false, message: "Invalid multipart form data." },
       { status: 400 },
     );
   }
 
   const lead: LeadPayload = {
-    name: asTrimmedString(body.name),
-    email: asTrimmedString(body.email),
-    phone: asTrimmedString(body.phone),
-    address: asTrimmedString(body.address),
-    jobType: asTrimmedString(body.jobType),
-    notes: asTrimmedString(body.notes) || asTrimmedString(body.message),
-    filePath: asTrimmedString(body.filePath),
+    name: asTrimmedString(form.get("name")),
+    email: asTrimmedString(form.get("email")),
+    phone: asTrimmedString(form.get("phone")),
+    address: asTrimmedString(form.get("address")),
+    jobType: asTrimmedString(form.get("jobType")),
+    notes: asTrimmedString(form.get("notes")) || asTrimmedString(form.get("message")),
   };
+
+  const files = form.getAll("files");
 
   const missing = (
     ["name", "email", "phone", "address", "jobType"] as const
@@ -142,11 +211,26 @@ export async function POST(request: Request) {
   }
 
   const createdAtIso = new Date().toISOString();
+  const docRef = db.collection("leads").doc();
 
-  let docRef: { id: string };
+  let attachments: LeadAttachment[] = [];
   try {
-    docRef = await db.collection("leads").add({
+    attachments = await uploadLeadAttachments(files, docRef.id);
+  } catch (error) {
+    console.error("Failed to upload lead attachments", error);
+    return NextResponse.json(
+      { success: false, message: "Failed to upload lead photos." },
+      { status: 500 },
+    );
+  }
+
+  const filePaths = attachments.map((attachment) => attachment.path);
+
+  try {
+    await docRef.set({
       ...lead,
+      attachments,
+      filePaths,
       createdAt: FieldValue.serverTimestamp(),
     });
   } catch (error) {
@@ -162,7 +246,7 @@ export async function POST(request: Request) {
       lead,
       createdAtIso,
       leadId: docRef.id,
-      filePath: lead.filePath ?? "",
+      attachments,
     });
   } catch (error) {
     console.error("Failed to send lead notification email", error);

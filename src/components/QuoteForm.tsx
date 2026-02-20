@@ -21,14 +21,6 @@ export function QuoteForm() {
 
     const form = event.currentTarget;
     const formData = new FormData(form);
-    const payload = {
-      name: String(formData.get("name") ?? "").trim(),
-      email: String(formData.get("email") ?? "").trim(),
-      phone: String(formData.get("phone") ?? "").trim(),
-      address: String(formData.get("address") ?? "").trim(),
-      jobType: String(formData.get("jobType") ?? "").trim(),
-      notes: String(formData.get("notes") ?? "").trim(),
-    };
 
     setIsSubmitting(true);
     setSubmitStatus("idle");
@@ -36,10 +28,7 @@ export function QuoteForm() {
     try {
       const response = await fetch("/api/lead", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
+        body: formData,
       });
 
       if (!response.ok) {
@@ -56,7 +45,11 @@ export function QuoteForm() {
   };
 
   return (
-    <form className="rounded-xl border border-zinc-200 bg-white p-6 sm:p-8" onSubmit={handleSubmit}>
+    <form
+      className="rounded-xl border border-zinc-200 bg-white p-6 sm:p-8"
+      encType="multipart/form-data"
+      onSubmit={handleSubmit}
+    >
       <h2 className="text-2xl font-semibold tracking-tight text-zinc-900">{QUOTE_FORM_COPY.heading}</h2>
       <p className="mt-2 text-sm text-zinc-600">{QUOTE_FORM_COPY.description}</p>
       <div className="mt-6 grid gap-5 sm:grid-cols-2">
@@ -128,16 +121,16 @@ export function QuoteForm() {
           </select>
         </div>
         <div className="sm:col-span-2">
-          <label className="text-sm font-medium text-zinc-800" htmlFor="photos">
+          <label className="text-sm font-medium text-zinc-800" htmlFor="files">
             Photos (optional)
           </label>
           <p className="mt-1 text-sm text-zinc-600">Photos help us quote faster. Add 3–6 photos if you can.</p>
           <input
             accept="image/*"
             className={fileFieldClassName}
-            id="photos"
+            id="files"
             multiple
-            name="photos"
+            name="files"
             type="file"
           />
           <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-zinc-600">
