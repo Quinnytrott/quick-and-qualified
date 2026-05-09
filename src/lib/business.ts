@@ -175,7 +175,7 @@ export const QUOTE_FORM_COPY = {
   phoneLabel: "Phone",
   phonePlaceholder: "Your best contact number",
   emailLabel: "Email",
-  emailPlaceholder: EMAIL,
+  emailPlaceholder: "your@email.com",
   addressLabel: "Address",
   addressPlaceholder: "Service address",
   jobTypeLabel: "Job Type",
