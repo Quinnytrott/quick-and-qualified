@@ -3,7 +3,7 @@ export const TAGLINE = "Roofing • Eavestrough • Repairs";
 export const SERVICE_AREA = "Georgina, Ontario + surrounding area";
 export const PHONE_DISPLAY = "";
 export const PHONE_TEL = "";
-export const EMAIL = "quinnytrott@gmail.com";
+export const EMAIL = "info@quickandqualified.ca";
 
 export const SECTION_IDS = {
   hero: "hero",
