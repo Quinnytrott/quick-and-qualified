@@ -152,6 +152,7 @@ async function sendLeadNotification(params: {
   await resend.emails.send({
     from: LEAD_NOTIFICATION_FROM,
     to: LEAD_NOTIFICATION_TO,
+    replyTo: lead.email,
     subject: `New Q2 Lead — ${lead.jobType} — ${lead.name}`,
     html,
   });
