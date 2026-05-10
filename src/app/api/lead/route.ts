@@ -36,6 +36,13 @@ type LeadAttachment = {
   size: number;
 };
 
+type LeadNotificationStatus =
+  | "pending"
+  | "sent"
+  | "delivery_delayed"
+  | "delivered"
+  | "failed";
+
 function asTrimmedString(value: FormDataEntryValue | null): string {
   return typeof value === "string" ? value.trim() : "";
 }
@@ -47,6 +54,10 @@ function escapeHtml(value: string): string {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
+}
+
+function toErrorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : "Unknown error.";
 }
 
 function toSafeFilename(filename: string): string {
@@ -104,7 +115,7 @@ async function sendLeadNotification(params: {
   createdAtIso: string;
   leadId: string;
   attachments: LeadAttachment[];
-}) {
+}): Promise<string | null> {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
     throw new Error("Missing RESEND_API_KEY.");
@@ -149,7 +160,7 @@ async function sendLeadNotification(params: {
     "Photos are stored with the lead record.",
   ].join("\n");
 
-  await resend.emails.send({
+  const { data, error } = await resend.emails.send({
     from: LEAD_NOTIFICATION_FROM,
     to: LEAD_NOTIFICATION_TO,
     replyTo: lead.email,
@@ -157,6 +168,12 @@ async function sendLeadNotification(params: {
     html,
     text,
   });
+
+  if (error) {
+    throw new Error(error.message || "Failed to send lead notification.");
+  }
+
+  return data?.id ?? null;
 }
 
 export async function POST(request: Request) {
@@ -234,6 +251,17 @@ export async function POST(request: Request) {
       attachments,
       filePaths,
       createdAt: FieldValue.serverTimestamp(),
+      notificationStatus: "pending" satisfies LeadNotificationStatus,
+      notificationAttemptedAt: null,
+      notificationSentAt: null,
+      notificationError: null,
+      notificationEmailId: null,
+      notificationLastEventAt: null,
+      notificationLastEventType: null,
+      notificationDelayedAt: null,
+      notificationDeliveredAt: null,
+      notificationFailedAt: null,
+      notificationWebhookReceivedAt: null,
     });
   } catch (error) {
     console.error("Failed to create lead", error);
@@ -243,20 +271,42 @@ export async function POST(request: Request) {
     );
   }
 
+  let notificationStatus: LeadNotificationStatus = "pending";
+  let notificationError: string | null = null;
+  let notificationEmailId: string | null = null;
+
   try {
-    await sendLeadNotification({
+    notificationEmailId = await sendLeadNotification({
       lead,
       createdAtIso,
       leadId: docRef.id,
       attachments,
     });
+    notificationStatus = "sent";
   } catch (error) {
+    notificationStatus = "failed";
+    notificationError = toErrorMessage(error);
     console.error("Failed to send lead notification email", error);
-    return NextResponse.json(
-      { success: false, message: "Lead saved but notification email failed." },
-      { status: 500 },
-    );
   }
 
-  return NextResponse.json({ success: true });
+  try {
+    await docRef.update({
+      notificationStatus,
+      notificationAttemptedAt: FieldValue.serverTimestamp(),
+      notificationSentAt:
+        notificationStatus === "sent" ? FieldValue.serverTimestamp() : null,
+      notificationFailedAt:
+        notificationStatus === "failed" ? FieldValue.serverTimestamp() : null,
+      notificationError,
+      notificationEmailId,
+    });
+  } catch (error) {
+    console.error("Failed to update lead notification status", error);
+  }
+
+  return NextResponse.json({
+    success: true,
+    leadId: docRef.id,
+    notificationStatus,
+  });
 }
