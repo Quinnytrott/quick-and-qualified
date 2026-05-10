@@ -4,8 +4,7 @@ import { Resend } from "resend";
 import { getDb, getStorageBucket } from "@/lib/firebaseAdmin";
 
 export const runtime = "nodejs";
-const LEAD_NOTIFICATION_TO =
-  process.env.NOTIFICATION_EMAIL || "info@quickandqualified.ca";
+const LEAD_NOTIFICATION_TO = "info@quickandqualified.ca";
 
 const LEAD_NOTIFICATION_FROM =
   process.env.LEAD_NOTIFICATION_FROM ||
