@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { FieldValue } from "firebase-admin/firestore";
 import { Resend } from "resend";
 import { getDb, getStorageBucket } from "@/lib/firebaseAdmin";
+import { buildLeadViewerUrl } from "@/lib/leadViewer";
 
 export const runtime = "nodejs";
 const LEAD_NOTIFICATION_TO = "info@quickandqualified.ca";
@@ -126,6 +127,7 @@ async function sendLeadNotification(params: {
   const photosSummary = attachments.length > 0
     ? `${attachments.length}`
     : "0";
+  const leadViewerUrl = buildLeadViewerUrl(leadId);
 
   const html = `
     <h2 style="margin:0 0 12px;">New Q2 Lead</h2>
@@ -142,6 +144,14 @@ async function sendLeadNotification(params: {
       <tr><td><strong>Created At</strong></td><td>${escapeHtml(createdAtIso)}</td></tr>
     </table>
     <p style="margin:16px 0 0;color:#52525b;">Photos are stored with the lead record.</p>
+    <p style="margin:20px 0 0;">
+      <a
+        href="${escapeHtml(leadViewerUrl)}"
+        style="display:inline-block;border-radius:9999px;background:#1d4ed8;color:#ffffff;padding:12px 18px;text-decoration:none;font-weight:600;"
+      >
+        View Lead
+      </a>
+    </p>
   `;
 
   const text = [
@@ -158,6 +168,7 @@ async function sendLeadNotification(params: {
     `Created At: ${createdAtIso}`,
     "",
     "Photos are stored with the lead record.",
+    `View Lead: ${leadViewerUrl}`,
   ].join("\n");
 
   const { data, error } = await resend.emails.send({
