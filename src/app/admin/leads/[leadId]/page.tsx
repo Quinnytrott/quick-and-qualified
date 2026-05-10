@@ -26,6 +26,10 @@ type LeadDocument = {
   notes?: string;
   createdAt?: Timestamp | Date | string | null;
   attachments?: LeadAttachment[];
+  conversionStatus?: string;
+  convertedAt?: Timestamp | Date | string | null;
+  measureAgentProjectId?: string;
+  measureAgentProjectUrl?: string;
 };
 
 type LeadPageProps = {
@@ -124,10 +128,14 @@ export default async function LeadDetailPage(props: LeadPageProps) {
               address={lead.address || ""}
               customerName={lead.name || ""}
               email={lead.email || ""}
+              initialConversionStatus={lead.conversionStatus || ""}
+              initialMeasureAgentProjectId={lead.measureAgentProjectId || ""}
+              initialMeasureAgentProjectUrl={lead.measureAgentProjectUrl || ""}
               jobType={lead.jobType || ""}
               leadId={leadId}
               notes={lead.notes || ""}
               phone={lead.phone || ""}
+              viewerToken={token}
               viewerUrl={viewerUrl}
             />
             <dl className="mt-6 grid gap-4 sm:grid-cols-2">

@@ -16,6 +16,10 @@ type LeadActionsProps = {
   jobType: string;
   notes: string;
   viewerUrl: string;
+  viewerToken: string;
+  initialConversionStatus: string;
+  initialMeasureAgentProjectId: string;
+  initialMeasureAgentProjectUrl: string;
 };
 
 function toTelHref(phone: string): string {
@@ -40,6 +44,10 @@ export function LeadActions(props: LeadActionsProps) {
     jobType,
     notes,
     viewerUrl,
+    viewerToken,
+    initialConversionStatus,
+    initialMeasureAgentProjectId,
+    initialMeasureAgentProjectUrl,
   } = props;
   const [isScheduleOpen, setIsScheduleOpen] = useState(false);
   const [scheduleDate, setScheduleDate] = useState("");
@@ -47,9 +55,54 @@ export function LeadActions(props: LeadActionsProps) {
   const [durationMinutes, setDurationMinutes] = useState("60");
   const [visitNotes, setVisitNotes] = useState("");
   const [statusMessage, setStatusMessage] = useState("");
+  const [isConverting, setIsConverting] = useState(false);
+  const [conversionStatus, setConversionStatus] = useState(initialConversionStatus);
+  const [measureAgentProjectId, setMeasureAgentProjectId] = useState(initialMeasureAgentProjectId);
+  const [measureAgentProjectUrl, setMeasureAgentProjectUrl] = useState(initialMeasureAgentProjectUrl);
 
   const canCall = Boolean(phone.trim());
   const canEmail = Boolean(email.trim());
+  const hasMeasureAgentProject = Boolean(measureAgentProjectId || measureAgentProjectUrl);
+
+  const handleConvertToMeasureAgent = async () => {
+    setStatusMessage("");
+    setIsConverting(true);
+
+    try {
+      const response = await fetch(`/api/lead/${leadId}/convert`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token: viewerToken }),
+      });
+
+      const payload = (await response.json().catch(() => null)) as
+        | {
+            success?: boolean;
+            message?: string;
+            projectId?: string;
+            projectUrl?: string;
+            conversionStatus?: string;
+          }
+        | null;
+
+      if (!response.ok || !payload?.success || !payload.projectId || !payload.projectUrl) {
+        throw new Error(payload?.message || "Could not convert the lead to MeasureAgent.");
+      }
+
+      setMeasureAgentProjectId(payload.projectId);
+      setMeasureAgentProjectUrl(payload.projectUrl);
+      setConversionStatus(payload.conversionStatus || "converted");
+      setStatusMessage("Converted to MeasureAgent.");
+    } catch (error) {
+      setStatusMessage(
+        error instanceof Error ? error.message : "Could not convert the lead to MeasureAgent.",
+      );
+    } finally {
+      setIsConverting(false);
+    }
+  };
 
   const handleScheduleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -120,6 +173,25 @@ export function LeadActions(props: LeadActionsProps) {
         >
           Schedule Visit
         </button>
+        {hasMeasureAgentProject ? (
+          <a
+            className={secondaryButtonClass}
+            href={measureAgentProjectUrl}
+            rel="noreferrer"
+            target="_blank"
+          >
+            Open MeasureAgent Project
+          </a>
+        ) : (
+          <button
+            className={secondaryButtonClass}
+            disabled={isConverting}
+            onClick={handleConvertToMeasureAgent}
+            type="button"
+          >
+            {isConverting ? "Converting..." : "Convert to MeasureAgent Project"}
+          </button>
+        )}
       </div>
 
       {isScheduleOpen ? (
@@ -189,6 +261,11 @@ export function LeadActions(props: LeadActionsProps) {
         </form>
       ) : null}
 
+      {conversionStatus === "converted" ? (
+        <p className="text-sm text-zinc-600">
+          Converted to MeasureAgent{measureAgentProjectId ? ` · ${measureAgentProjectId}` : ""}.
+        </p>
+      ) : null}
       {statusMessage ? <p className="text-sm text-zinc-600">{statusMessage}</p> : null}
     </div>
   );

@@ -53,3 +53,13 @@ export function buildLeadViewerUrlWithToken(leadId: string, token: string): stri
   url.searchParams.set("token", token);
   return url.toString();
 }
+
+export function buildLeadAttachmentUrl(
+  leadId: string,
+  attachmentIndex: number,
+  token: string,
+): string {
+  const url = new URL(`/api/lead/${leadId}/attachments/${attachmentIndex}`, getSiteUrl());
+  url.searchParams.set("token", token);
+  return url.toString();
+}
