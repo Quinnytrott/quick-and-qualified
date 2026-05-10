@@ -67,8 +67,8 @@ function buildProjectTitle(lead: LeadDocument, leadId: string): string {
   return trimOrNull(lead.address) || trimOrNull(lead.name) || `Q2 Lead ${leadId}`;
 }
 
-function buildContactInfo(lead: LeadDocument): string {
-  return [trimOrNull(lead.phone), trimOrNull(lead.email)].filter(Boolean).join(" / ");
+function buildContactPhone(lead: LeadDocument): string | null {
+  return trimOrNull(lead.phone);
 }
 
 function buildScopes(jobType: string | undefined) {
@@ -171,7 +171,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
   const customerName = trimOrNull(lead.name);
   const propertyAddress = trimOrNull(lead.address);
   const customerEmail = trimOrNull(lead.email);
-  const contactInfo = buildContactInfo(lead);
+  const contactPhone = buildContactPhone(lead);
   const now = FieldValue.serverTimestamp();
   const nowIso = new Date().toISOString();
 
@@ -201,8 +201,10 @@ export async function POST(request: NextRequest, context: RouteContext) {
           address: propertyAddress ? { line1: propertyAddress } : null,
           customerName,
           propertyAddress,
-          contactInfo,
+          contactInfo: contactPhone,
+          phone: contactPhone,
           customerEmail,
+          email: customerEmail,
           scopes: buildScopes(lead.jobType),
           scope: buildPrimaryScope(lead.jobType),
           workflowLane: "field_intake",
