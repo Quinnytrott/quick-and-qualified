@@ -148,21 +148,8 @@ export async function POST(request: NextRequest, context: RouteContext) {
   const lead = leadSnapshot.data() as LeadDocument;
   const existingProjectId = trimOrNull(lead.measureAgentProjectId);
   const existingProjectUrl = trimOrNull(lead.measureAgentProjectUrl);
-
-  if (existingProjectId || existingProjectUrl) {
-    const projectId = existingProjectId || buildProjectId(leadId);
-    const projectUrl = existingProjectUrl || buildMeasureAgentProjectUrl(projectId);
-
-    return NextResponse.json({
-      success: true,
-      projectId,
-      projectUrl,
-      conversionStatus: lead.conversionStatus || "converted",
-      existed: true,
-    });
-  }
-
-  const projectId = buildProjectId(leadId);
+  const hasExistingConversion = Boolean(existingProjectId || existingProjectUrl);
+  const projectId = existingProjectId || buildProjectId(leadId);
   const viewerUrl = buildLeadViewerUrlWithToken(leadId, token);
   const attachments = Array.isArray(lead.attachments) ? lead.attachments : [];
   const supportingPhotos = buildSupportingPhotos(leadId, token, attachments, lead.jobType);
@@ -179,10 +166,20 @@ export async function POST(request: NextRequest, context: RouteContext) {
     const ownerUid = getMeasureAgentOwnerUid();
     const companyId = getMeasureAgentCompanyId();
     const measureAgentDb = getMeasureAgentDb();
-    const projectUrl = buildMeasureAgentProjectUrl(projectId);
+    const projectUrl = existingProjectUrl || buildMeasureAgentProjectUrl(projectId);
     const projectRef = measureAgentDb.collection("users").doc(ownerUid).collection("projects").doc(projectId);
     const mirrorRef = measureAgentDb.collection("projects").doc(projectId);
     const projectSnapshot = await projectRef.get();
+
+    if (hasExistingConversion && projectSnapshot.exists) {
+      return NextResponse.json({
+        success: true,
+        projectId,
+        projectUrl,
+        conversionStatus: lead.conversionStatus || "converted",
+        existed: true,
+      });
+    }
 
     if (!projectSnapshot.exists) {
       const batch = measureAgentDb.batch();
