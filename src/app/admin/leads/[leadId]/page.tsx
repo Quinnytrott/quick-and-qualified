@@ -1,7 +1,8 @@
 import { Timestamp } from "firebase-admin/firestore";
 import { notFound } from "next/navigation";
+import { LeadActions } from "@/components/LeadActions";
 import { getDb, getStorageBucket } from "@/lib/firebaseAdmin";
-import { verifyLeadViewerToken } from "@/lib/leadViewer";
+import { buildLeadViewerUrlWithToken, verifyLeadViewerToken } from "@/lib/leadViewer";
 
 /* eslint-disable @next/next/no-img-element */
 
@@ -95,6 +96,7 @@ export default async function LeadDetailPage(props: LeadPageProps) {
 
   const lead = leadSnapshot.data() as LeadDocument;
   const attachments = Array.isArray(lead.attachments) ? lead.attachments : [];
+  const viewerUrl = buildLeadViewerUrlWithToken(leadId, token);
   const photos = await Promise.all(
     attachments.map(async (attachment, index) => ({
       name: attachment.name || `Photo ${index + 1}`,
@@ -118,6 +120,16 @@ export default async function LeadDetailPage(props: LeadPageProps) {
         <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(320px,360px)]">
           <article className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm sm:p-8">
             <h2 className="text-lg font-semibold text-zinc-900">Lead Details</h2>
+            <LeadActions
+              address={lead.address || ""}
+              customerName={lead.name || ""}
+              email={lead.email || ""}
+              jobType={lead.jobType || ""}
+              leadId={leadId}
+              notes={lead.notes || ""}
+              phone={lead.phone || ""}
+              viewerUrl={viewerUrl}
+            />
             <dl className="mt-6 grid gap-4 sm:grid-cols-2">
               <div>
                 <dt className="text-xs font-medium uppercase tracking-[0.14em] text-zinc-500">Phone</dt>

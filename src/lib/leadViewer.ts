@@ -45,7 +45,11 @@ export function getSiteUrl(): string {
 }
 
 export function buildLeadViewerUrl(leadId: string): string {
+  return buildLeadViewerUrlWithToken(leadId, createLeadViewerToken(leadId));
+}
+
+export function buildLeadViewerUrlWithToken(leadId: string, token: string): string {
   const url = new URL(`/admin/leads/${leadId}`, getSiteUrl());
-  url.searchParams.set("token", createLeadViewerToken(leadId));
+  url.searchParams.set("token", token);
   return url.toString();
 }
