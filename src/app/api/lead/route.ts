@@ -112,20 +112,9 @@ async function sendLeadNotification(params: {
 
   const { lead, createdAtIso, leadId, attachments } = params;
   const resend = new Resend(apiKey);
-  const projectId = process.env.FIREBASE_PROJECT_ID;
-  const firestoreLink = projectId
-    ? `https://console.firebase.google.com/project/${projectId}/firestore/data/~2Fleads~2F${leadId}`
-    : null;
-
-  const photosHtml =
-    attachments.length > 0
-      ? `<ul style="margin:8px 0 0 18px;padding:0;">${attachments
-          .map(
-            (attachment) =>
-              `<li style="margin:0 0 6px;"><a href="${escapeHtml(attachment.url)}">${escapeHtml(attachment.name)}</a></li>`,
-          )
-          .join("")}</ul>`
-      : `<p style="margin:8px 0 0;">—</p>`;
+  const photosSummary = attachments.length > 0
+    ? `${attachments.length}`
+    : "0";
 
   const html = `
     <h2 style="margin:0 0 12px;">New Q2 Lead</h2>
@@ -137,16 +126,28 @@ async function sendLeadNotification(params: {
       <tr><td><strong>Address</strong></td><td>${escapeHtml(lead.address)}</td></tr>
       <tr><td><strong>Job Type</strong></td><td>${escapeHtml(lead.jobType)}</td></tr>
       <tr><td><strong>Message</strong></td><td>${escapeHtml(lead.notes || "—")}</td></tr>
+      <tr><td><strong>Photos Uploaded</strong></td><td>${escapeHtml(photosSummary)}</td></tr>
+      <tr><td><strong>Lead Reference</strong></td><td>${escapeHtml(leadId)}</td></tr>
       <tr><td><strong>Created At</strong></td><td>${escapeHtml(createdAtIso)}</td></tr>
     </table>
-    <h3 style="margin:16px 0 0;">Photos</h3>
-    ${photosHtml}
-    ${
-      firestoreLink
-        ? `<p style="margin:16px 0 0;"><a href="${firestoreLink}">Open in Firestore</a></p>`
-        : ""
-    }
+    <p style="margin:16px 0 0;color:#52525b;">Photos are stored with the lead record.</p>
   `;
+
+  const text = [
+    "New Q2 Lead",
+    "",
+    `Name: ${lead.name}`,
+    `Phone: ${lead.phone}`,
+    `Email: ${lead.email}`,
+    `Address: ${lead.address}`,
+    `Job Type: ${lead.jobType}`,
+    `Message: ${lead.notes || "—"}`,
+    `Photos Uploaded: ${photosSummary}`,
+    `Lead Reference: ${leadId}`,
+    `Created At: ${createdAtIso}`,
+    "",
+    "Photos are stored with the lead record.",
+  ].join("\n");
 
   await resend.emails.send({
     from: LEAD_NOTIFICATION_FROM,
@@ -154,6 +155,7 @@ async function sendLeadNotification(params: {
     replyTo: lead.email,
     subject: `New Q2 Lead — ${lead.jobType} — ${lead.name}`,
     html,
+    text,
   });
 }
 
