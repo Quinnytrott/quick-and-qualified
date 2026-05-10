@@ -50,7 +50,7 @@ type MeasureAgentSupportingPhoto = {
   description: string;
   category: "inspection" | "damage" | "feature" | "other";
   order: number;
-  uploadedAt?: FieldValue;
+  uploadedAt?: string;
   originalFileName?: string;
 };
 
@@ -122,7 +122,7 @@ function buildSupportingPhotos(
         description: trimOrNull(jobType) || "Imported from Quick & Qualified lead intake.",
         category,
         order,
-        uploadedAt: FieldValue.serverTimestamp(),
+        uploadedAt: new Date().toISOString(),
         originalFileName: trimOrNull(attachment.name) || undefined,
       },
     ];
@@ -173,6 +173,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
   const customerEmail = trimOrNull(lead.email);
   const contactInfo = buildContactInfo(lead);
   const now = FieldValue.serverTimestamp();
+  const nowIso = new Date().toISOString();
 
   try {
     const ownerUid = getMeasureAgentOwnerUid();
@@ -217,7 +218,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
             id: photo.id,
             storagePath: photo.storagePath,
             url: photo.downloadURL || "",
-            createdAt: now,
+            createdAt: nowIso,
             title: photo.title,
             description: photo.description,
             category: photo.category,
