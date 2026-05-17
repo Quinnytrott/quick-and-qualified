@@ -1,9 +1,9 @@
 export const BUSINESS_NAME = "Quick & Qualified Exteriors";
 export const TAGLINE = "Roofing • Eavestrough • Repairs";
 export const SERVICE_AREA = "Georgina, Ontario + surrounding area";
-export const PHONE_DISPLAY = "";
-export const PHONE_TEL = "";
 export const EMAIL = "info@quickandqualified.ca";
+export const PHONE_DISPLAY = "289-338-9804";
+export const PHONE_TEL = "+12893389804";
 
 export const SECTION_IDS = {
   hero: "hero",

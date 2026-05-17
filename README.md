@@ -34,3 +34,14 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Lead Email Routing
+
+Lead form notifications use separate sender and recipient settings:
+
+```bash
+LEAD_NOTIFICATION_TO=info@quickandqualified.ca
+LEAD_NOTIFICATION_FROM=Q2 Leads <leads@quickandqualified.ca>
+```
+
+Production and Vercel preview environments should set these values in environment settings. Do not commit secrets such as Resend API keys, Firebase private keys, or webhook secrets.

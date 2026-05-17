@@ -1,15 +1,17 @@
 import { NextResponse } from "next/server";
 import { FieldValue } from "firebase-admin/firestore";
 import { Resend } from "resend";
+import { EMAIL } from "@/lib/business";
 import { getDb, getStorageBucket } from "@/lib/firebaseAdmin";
 import { buildLeadViewerUrl } from "@/lib/leadViewer";
 
 export const runtime = "nodejs";
-const LEAD_NOTIFICATION_TO = "info@quickandqualified.ca";
+const DEFAULT_LEAD_NOTIFICATION_FROM = "Q2 Leads <leads@quickandqualified.ca>";
+const LEAD_NOTIFICATION_TO = process.env.LEAD_NOTIFICATION_TO || EMAIL;
 
 const LEAD_NOTIFICATION_FROM =
   process.env.LEAD_NOTIFICATION_FROM ||
-  "Q2 Leads <leads@quickandqualified.ca>";
+  DEFAULT_LEAD_NOTIFICATION_FROM;
 
 const SIGNED_URL_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 
@@ -68,6 +70,12 @@ function toSafeFilename(filename: string): string {
     .replace(/[^a-zA-Z0-9._-]/g, "_");
 
   return sanitized || "upload";
+}
+
+function toReplyToEmail(email: string): string | undefined {
+  const trimmed = email.trim();
+
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed) ? trimmed : undefined;
 }
 
 async function uploadLeadAttachments(
@@ -174,7 +182,7 @@ async function sendLeadNotification(params: {
   const { data, error } = await resend.emails.send({
     from: LEAD_NOTIFICATION_FROM,
     to: LEAD_NOTIFICATION_TO,
-    replyTo: lead.email,
+    replyTo: toReplyToEmail(lead.email),
     subject: `New Q2 Lead — ${lead.jobType} — ${lead.name}`,
     html,
     text,
