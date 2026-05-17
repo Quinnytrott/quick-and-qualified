@@ -1,8 +1,6 @@
 import {
   BUSINESS_NAME,
   CALL_TO_ACTION_LABEL,
-  EMAIL,
-  EMAIL_MAILTO,
   NAV_ITEMS,
   PHONE_DISPLAY,
   PHONE_TEL,
@@ -26,12 +24,6 @@ export function Header() {
               {item.label}
             </a>
           ))}
-          <a
-            className="break-all text-xs font-medium text-zinc-700 underline-offset-2 transition-colors hover:text-blue-900 hover:underline sm:text-sm"
-            href={EMAIL_MAILTO}
-          >
-            {EMAIL}
-          </a>
           {hasPhone ? (
             <a
               className={`${primaryButtonClass} px-4 py-2`}
