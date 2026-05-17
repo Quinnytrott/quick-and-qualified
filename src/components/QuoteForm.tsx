@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { EMAIL, JOB_TYPES, PHONE_TEL, QUOTE_FORM_COPY } from "@/lib/business";
+import { EMAIL, EMAIL_MAILTO, JOB_TYPES, PHONE_TEL, QUOTE_FORM_COPY } from "@/lib/business";
 import { primaryButtonClass } from "@/lib/ui";
 
 type SubmitStatus = "idle" | "success" | "error";
@@ -52,6 +52,13 @@ export function QuoteForm() {
     >
       <h2 className="text-2xl font-semibold tracking-tight text-zinc-900">{QUOTE_FORM_COPY.heading}</h2>
       <p className="mt-2 text-sm text-zinc-600">{QUOTE_FORM_COPY.description}</p>
+      <p className="mt-2 text-sm text-zinc-600">
+        Prefer email? Contact{" "}
+        <a className="break-all text-blue-900 underline-offset-2 hover:underline" href={EMAIL_MAILTO}>
+          {EMAIL}
+        </a>
+        .
+      </p>
       <div className="mt-6 grid gap-5 sm:grid-cols-2">
         <div>
           <label className="text-sm font-medium text-zinc-800" htmlFor="name">
@@ -148,7 +155,7 @@ export function QuoteForm() {
                 text
               </a>{" "}
               or{" "}
-              <a className="text-blue-900 underline-offset-2 hover:underline" href={`mailto:${EMAIL}`}>
+              <a className="text-blue-900 underline-offset-2 hover:underline" href={EMAIL_MAILTO}>
                 email
               </a>{" "}
               them after submitting.
@@ -156,7 +163,7 @@ export function QuoteForm() {
           ) : (
             <p className="mt-3 text-sm text-zinc-600">
               If attaching photos doesn&apos;t work, just{" "}
-              <a className="text-blue-900 underline-offset-2 hover:underline" href={`mailto:${EMAIL}`}>
+              <a className="text-blue-900 underline-offset-2 hover:underline" href={EMAIL_MAILTO}>
                 email
               </a>{" "}
               them after submitting.
@@ -193,7 +200,7 @@ export function QuoteForm() {
       {submitStatus === "error" ? (
         <p className="mt-4 text-sm text-zinc-700" role="alert">
           Something went wrong — please email{" "}
-          <a className="text-blue-900 underline-offset-2 hover:underline" href={`mailto:${EMAIL}`}>
+          <a className="text-blue-900 underline-offset-2 hover:underline" href={EMAIL_MAILTO}>
             {EMAIL}
           </a>
           .
