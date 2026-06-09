@@ -34,16 +34,15 @@ export type NavItem = {
 };
 
 export const NAV_ITEMS: NavItem[] = [
-  { label: "Homeowners", href: `#${SECTION_IDS.homeowners}` },
-  { label: "How It Works", href: `#${SECTION_IDS.process}` },
-  { label: "Contractors", href: `#${SECTION_IDS.contractors}` },
-  { label: "Pricing", href: `#${SECTION_IDS.services}` },
-  { label: REQUEST_QUOTE_LABEL, href: `#${SECTION_IDS.quote}` },
+  { label: "Home", href: "/" },
+  { label: "Homeowners", href: "/homeowners" },
+  { label: "Contractors", href: "/contractors" },
+  { label: REQUEST_QUOTE_LABEL, href: "/homeowners#inspection-request" },
 ];
 
 export const HERO_COPY = {
   eyebrow: TAGLINE,
-  heading: "Drone roof & eavestrough inspections with trusted contractor handoff",
+  heading: "Drone roof & eavestrough inspections with vetted contractor handoff",
   description:
     "Q2 helps homeowners document visible exterior issues using photos, drone inspection, and measurement-supported reports - then connects them with vetted local contractors when a quote is needed.",
 };
