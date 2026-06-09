@@ -23,6 +23,9 @@ type LeadDocument = {
   email?: string;
   address?: string;
   jobType?: string;
+  urgency?: string;
+  preferredContactMethod?: string;
+  consentToShare?: boolean;
   notes?: string;
   createdAt?: Timestamp | Date | string | null;
   attachments?: LeadAttachment[];
@@ -152,12 +155,26 @@ export default async function LeadDetailPage(props: LeadPageProps) {
                 <dd className="mt-1 text-sm text-zinc-900">{lead.address || "—"}</dd>
               </div>
               <div>
-                <dt className="text-xs font-medium uppercase tracking-[0.14em] text-zinc-500">Job Type</dt>
+                <dt className="text-xs font-medium uppercase tracking-[0.14em] text-zinc-500">Issue Type</dt>
                 <dd className="mt-1 text-sm text-zinc-900">{lead.jobType || "—"}</dd>
               </div>
               <div>
                 <dt className="text-xs font-medium uppercase tracking-[0.14em] text-zinc-500">Created At</dt>
                 <dd className="mt-1 text-sm text-zinc-900">{formatCreatedAt(lead.createdAt)}</dd>
+              </div>
+              <div>
+                <dt className="text-xs font-medium uppercase tracking-[0.14em] text-zinc-500">Urgency</dt>
+                <dd className="mt-1 text-sm text-zinc-900">{lead.urgency || "—"}</dd>
+              </div>
+              <div>
+                <dt className="text-xs font-medium uppercase tracking-[0.14em] text-zinc-500">Preferred Contact</dt>
+                <dd className="mt-1 text-sm text-zinc-900">{lead.preferredContactMethod || "—"}</dd>
+              </div>
+              <div className="sm:col-span-2">
+                <dt className="text-xs font-medium uppercase tracking-[0.14em] text-zinc-500">
+                  Contractor Handoff Consent
+                </dt>
+                <dd className="mt-1 text-sm text-zinc-900">{lead.consentToShare ? "Yes" : "—"}</dd>
               </div>
               <div className="sm:col-span-2">
                 <dt className="text-xs font-medium uppercase tracking-[0.14em] text-zinc-500">Notes</dt>

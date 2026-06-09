@@ -64,7 +64,7 @@ export function buildSiteVisitCalendarEvent(params: SiteVisitCalendarParams): st
   const description = [
     `Phone: ${phone || "—"}`,
     `Email: ${email || "—"}`,
-    `Job Type: ${jobType || "—"}`,
+    `Issue Type: ${jobType || "—"}`,
     `Lead Notes: ${notes || "—"}`,
     `Lead Reference: ${leadId}`,
     `Lead Viewer: ${viewerUrl}`,
@@ -82,7 +82,7 @@ export function buildSiteVisitCalendarEvent(params: SiteVisitCalendarParams): st
     `DTSTAMP:${formatUtcTimestamp(new Date())}`,
     `DTSTART:${formatUtcTimestamp(startAt)}`,
     `DTEND:${formatUtcTimestamp(endAt)}`,
-    `SUMMARY:${escapeIcsText(`Q2 Site Visit — ${customerName || "Customer"}`)}`,
+    `SUMMARY:${escapeIcsText(`Q2 Inspection Visit — ${customerName || "Customer"}`)}`,
     `LOCATION:${escapeIcsText(address || "Address unavailable")}`,
     `DESCRIPTION:${escapeIcsText(description)}`,
     "STATUS:CONFIRMED",

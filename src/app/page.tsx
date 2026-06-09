@@ -6,10 +6,14 @@ import { QuoteForm } from "@/components/QuoteForm";
 import { ServiceCard } from "@/components/ServiceCard";
 import { Step } from "@/components/Step";
 import {
-  BEST_FIT_JOBS,
   CALL_TO_ACTION_LABEL,
+  CONTRACTOR_APPLICATION_LABEL,
+  CONTRACTOR_ITEMS,
+  CONTRACTOR_SECTION_COPY,
+  CONTRACTOR_VETTING_ITEMS,
   HERO_COPY,
-  NOT_A_FIT_JOBS,
+  HOMEOWNER_ITEMS,
+  HOMEOWNER_SECTION_COPY,
   PHONE_DISPLAY,
   PHONE_TEL,
   PROCESS_SECTION_COPY,
@@ -21,6 +25,7 @@ import {
   SERVICES,
   SERVICES_SECTION_COPY,
   TRUST_ITEMS,
+  VETTING_SECTION_COPY,
 } from "@/lib/business";
 import { primaryButtonClass, secondaryButtonClass } from "@/lib/ui";
 
@@ -48,14 +53,12 @@ export default function Home() {
                 >
                   {REQUEST_QUOTE_LABEL}
                 </a>
-                {hasPhone ? (
-                  <a
-                    className={`${secondaryButtonClass} inline-flex items-center justify-center`}
-                    href={`tel:${PHONE_TEL}`}
-                  >
-                    {CALL_TO_ACTION_LABEL} {PHONE_DISPLAY}
-                  </a>
-                ) : null}
+                <a
+                  className={`${secondaryButtonClass} inline-flex items-center justify-center`}
+                  href={`#${SECTION_IDS.contractors}`}
+                >
+                  {CONTRACTOR_APPLICATION_LABEL}
+                </a>
               </div>
             </div>
             <div className="w-full max-w-lg lg:justify-self-end">
@@ -84,35 +87,35 @@ export default function Home() {
           ))}
         </section>
 
-        <section className="mt-20 space-y-6 md:mt-24" id={SECTION_IDS.services}>
+        <section className="mt-20 grid gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] md:mt-24" id={SECTION_IDS.homeowners}>
           <div>
-            <p className="text-sm font-medium text-zinc-600">{SERVICES_SECTION_COPY.eyebrow}</p>
+            <p className="text-sm font-medium text-zinc-600">{HOMEOWNER_SECTION_COPY.eyebrow}</p>
             <h2 className="mt-2 text-3xl font-semibold tracking-tight text-zinc-900">
-              {SERVICES_SECTION_COPY.heading}
+              {HOMEOWNER_SECTION_COPY.heading}
             </h2>
+            <p className="mt-4 text-sm leading-7 text-zinc-600">{HOMEOWNER_SECTION_COPY.description}</p>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {SERVICES.map((service) => (
-              <ServiceCard key={service.title} description={service.description} title={service.title} />
-            ))}
+          <div className="rounded-xl border border-zinc-200 bg-white p-6 sm:p-8">
+            <ul className="space-y-3 text-sm leading-6 text-zinc-700">
+              {HOMEOWNER_ITEMS.map((item) => (
+                <li key={item} className="flex gap-3">
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-900" aria-hidden="true" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
           </div>
-          <div className="grid gap-4 lg:grid-cols-2">
-            <article className="rounded-xl border border-zinc-200 bg-white p-6">
-              <h3 className="text-lg font-semibold text-zinc-900">{SERVICES_SECTION_COPY.bestFitTitle}</h3>
-              <ul className="mt-4 list-disc space-y-2 pl-5 text-sm text-zinc-600">
-                {BEST_FIT_JOBS.map((job) => (
-                  <li key={job}>{job}</li>
-                ))}
-              </ul>
-            </article>
-            <article className="rounded-xl border border-zinc-200 bg-white p-6">
-              <h3 className="text-lg font-semibold text-zinc-900">{SERVICES_SECTION_COPY.notFitTitle}</h3>
-              <ul className="mt-4 list-disc space-y-2 pl-5 text-sm text-zinc-600">
-                {NOT_A_FIT_JOBS.map((job) => (
-                  <li key={job}>{job}</li>
-                ))}
-              </ul>
-            </article>
+        </section>
+
+        <section className="mt-20 rounded-xl bg-blue-50 p-6 sm:p-8 md:mt-24 lg:p-10" id={SECTION_IDS.process}>
+          <div className="space-y-6">
+            <p className="text-sm font-medium text-zinc-600">{PROCESS_SECTION_COPY.eyebrow}</p>
+            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-zinc-900">{PROCESS_SECTION_COPY.heading}</h2>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {PROCESS_STEPS.map((step, index) => (
+                <Step key={step.title} description={step.description} number={index + 1} title={step.title} />
+              ))}
+            </div>
           </div>
         </section>
 
@@ -130,16 +133,61 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="mt-20 rounded-xl bg-blue-50 p-6 sm:p-8 md:mt-24 lg:p-10" id={SECTION_IDS.process}>
-          <div className="space-y-6">
-            <p className="text-sm font-medium text-zinc-600">{PROCESS_SECTION_COPY.eyebrow}</p>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-zinc-900">{PROCESS_SECTION_COPY.heading}</h2>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {PROCESS_STEPS.map((step, index) => (
-                <Step key={step.title} description={step.description} number={index + 1} title={step.title} />
+        <section className="mt-20 grid gap-6 lg:grid-cols-2 md:mt-24" id={SECTION_IDS.contractors}>
+          <article className="rounded-xl border border-zinc-200 bg-white p-6 sm:p-8">
+            <p className="text-sm font-medium text-zinc-600">{CONTRACTOR_SECTION_COPY.eyebrow}</p>
+            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-zinc-900">
+              {CONTRACTOR_SECTION_COPY.heading}
+            </h2>
+            <p className="mt-4 text-sm leading-7 text-zinc-600">{CONTRACTOR_SECTION_COPY.description}</p>
+            <a
+              className={`${primaryButtonClass} mt-6 inline-flex items-center justify-center`}
+              href={`#${SECTION_IDS.quote}`}
+            >
+              {CONTRACTOR_APPLICATION_LABEL}
+            </a>
+          </article>
+          <article className="rounded-xl border border-zinc-200 bg-white p-6 sm:p-8">
+            <ul className="space-y-3 text-sm leading-6 text-zinc-700">
+              {CONTRACTOR_ITEMS.map((item) => (
+                <li key={item} className="flex gap-3">
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-900" aria-hidden="true" />
+                  <span>{item}</span>
+                </li>
               ))}
-            </div>
+            </ul>
+          </article>
+        </section>
+
+        <section className="mt-20 space-y-6 md:mt-24" id={SECTION_IDS.vetting}>
+          <div>
+            <p className="text-sm font-medium text-zinc-600">{VETTING_SECTION_COPY.eyebrow}</p>
+            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-zinc-900">
+              {VETTING_SECTION_COPY.heading}
+            </h2>
           </div>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {CONTRACTOR_VETTING_ITEMS.map((item) => (
+              <p key={item} className="rounded-xl border border-zinc-200 bg-white p-4 text-sm text-zinc-700">
+                {item}
+              </p>
+            ))}
+          </div>
+        </section>
+
+        <section className="mt-20 space-y-6 md:mt-24" id={SECTION_IDS.services}>
+          <div>
+            <p className="text-sm font-medium text-zinc-600">{SERVICES_SECTION_COPY.eyebrow}</p>
+            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-zinc-900">
+              {SERVICES_SECTION_COPY.heading}
+            </h2>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {SERVICES.map((service) => (
+              <ServiceCard key={service.title} description={service.description} title={service.title} />
+            ))}
+          </div>
+          <p className="text-sm font-medium text-zinc-700">{SERVICES_SECTION_COPY.note}</p>
         </section>
 
         <section className="mt-20 grid gap-6 lg:grid-cols-2 md:mt-24" id={SECTION_IDS.serviceArea}>

@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Quick & Qualified Exteriors / Q2
 
-## Getting Started
+Next.js site for Q2's exterior inspection, drone/photo documentation, homeowner qualification, and vetted contractor handoff workflow.
 
-First, run the development server:
+## Local Development
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment Variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Copy `.env.example` to `.env.local` for local development and fill in real values. Do not commit real secrets.
 
-## Learn More
+Required for Vercel Preview and Production:
 
-To learn more about Next.js, take a look at the following resources:
+- `LEAD_VIEWER_SECRET`
+- `CONTRACTOR_APPLICATIONS_ADMIN_TOKEN`
+- `FIREBASE_PROJECT_ID`
+- `FIREBASE_CLIENT_EMAIL`
+- `FIREBASE_PRIVATE_KEY`
+- `FIREBASE_STORAGE_BUCKET`
+- `RESEND_API_KEY`
+- `RESEND_WEBHOOK_SECRET`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Optional or route-specific:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `SITE_URL` / `NEXT_PUBLIC_SITE_URL`: canonical URL used when generating signed admin links.
+- `LEAD_NOTIFICATION_FROM`: defaults to `Q2 Leads <leads@quickandqualified.ca>`.
+- `MEASUREAGENT_FIREBASE_PROJECT_ID`
+- `MEASUREAGENT_FIREBASE_CLIENT_EMAIL`
+- `MEASUREAGENT_FIREBASE_PRIVATE_KEY`
+- `MEASUREAGENT_OWNER_UID`
+- `MEASUREAGENT_COMPANY_ID`
+- `MEASUREAGENT_SITE_URL`
 
-## Deploy on Vercel
+MeasureAgent variables are required only for converting homeowner leads into MeasureAgent projects.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Admin URLs
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Contractor application list:
+
+```text
+/admin/contractor-applications?token=<CONTRACTOR_APPLICATIONS_ADMIN_TOKEN>
+```
+
+Contractor application detail links are generated with `LEAD_VIEWER_SECRET` and included in contractor application notification emails.
+
+Homeowner lead detail links are also generated with `LEAD_VIEWER_SECRET` and included in homeowner lead notification emails.
+
+## Checks
+
+```bash
+npm run lint
+npm run build
+```

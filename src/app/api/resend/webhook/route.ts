@@ -24,6 +24,8 @@ type LeadNotificationDocument = {
   notificationLastEventAt?: string | null;
 };
 
+const NOTIFICATION_COLLECTIONS = ["leads", "contractorApplications"] as const;
+
 function getWebhookSecret(): string {
   const secret = process.env.RESEND_WEBHOOK_SECRET;
 
@@ -118,6 +120,27 @@ function buildNotificationUpdate(event: TrackedWebhookEvent) {
   }
 }
 
+async function findNotificationDocument(emailId: string) {
+  const db = getDb();
+
+  for (const collectionName of NOTIFICATION_COLLECTIONS) {
+    const snapshot = await db
+      .collection(collectionName)
+      .where("notificationEmailId", "==", emailId)
+      .limit(1)
+      .get();
+
+    if (!snapshot.empty) {
+      return {
+        collectionName,
+        doc: snapshot.docs[0],
+      };
+    }
+  }
+
+  return null;
+}
+
 export async function POST(request: Request) {
   let webhookSecret: string;
   try {
@@ -173,23 +196,19 @@ export async function POST(request: Request) {
   }
 
   const db = getDb();
-  const leadSnapshot = await db
-    .collection("leads")
-    .where("notificationEmailId", "==", event.data.email_id)
-    .limit(1)
-    .get();
+  const notificationDocument = await findNotificationDocument(event.data.email_id);
 
-  if (leadSnapshot.empty) {
+  if (!notificationDocument) {
     return NextResponse.json({
       success: true,
       ignored: true,
-      reason: "lead_not_found",
+      reason: "submission_not_found",
       emailId: event.data.email_id,
       type: event.type,
     });
   }
 
-  const leadDoc = leadSnapshot.docs[0];
+  const leadDoc = notificationDocument.doc;
   const update = buildNotificationUpdate(event);
 
   const updateResult = await db.runTransaction(async (transaction) => {
@@ -213,6 +232,7 @@ export async function POST(request: Request) {
   return NextResponse.json({
     success: true,
     leadId: leadDoc.id,
+    collectionName: notificationDocument.collectionName,
     emailId: event.data.email_id,
     type: event.type,
     result: updateResult,

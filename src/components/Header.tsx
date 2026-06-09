@@ -13,12 +13,12 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-20 border-b border-zinc-200 bg-white/80 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-6 py-4 sm:px-8 lg:px-12">
-        <div>
+      <div className="mx-auto flex max-w-6xl flex-col gap-4 px-6 py-4 sm:px-8 md:flex-row md:items-center md:justify-between lg:px-12">
+        <div className="min-w-0">
           <p className="text-sm font-semibold text-zinc-900">{BUSINESS_NAME}</p>
           <p className="text-xs text-zinc-600">{TAGLINE}</p>
         </div>
-        <nav className="flex items-center gap-6 text-sm text-zinc-700">
+        <nav className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-zinc-700 md:justify-end">
           {NAV_ITEMS.map((item) => (
             <a key={item.href} className={`${linkClass} transition-colors`} href={item.href}>
               {item.label}

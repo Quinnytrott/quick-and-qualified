@@ -25,6 +25,8 @@ export function Footer() {
             </a>
           </p>
         ) : null}
+        <p className="max-w-4xl text-xs leading-6 text-zinc-500">{FOOTER_COPY.disclaimer}</p>
+        <p className="max-w-4xl text-xs leading-6 text-zinc-500">{FOOTER_COPY.privacy}</p>
         <p className="text-xs text-zinc-500">
           © {new Date().getFullYear()} {BUSINESS_NAME}. {FOOTER_COPY.rightsLabel}
         </p>
