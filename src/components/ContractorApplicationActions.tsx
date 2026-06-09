@@ -24,6 +24,8 @@ const statusActions: Array<{
 
 const fieldClassName =
   "mt-2 w-full rounded-xl border border-zinc-300 bg-white px-4 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 transition-[border-color,box-shadow] focus:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-200";
+const activeStatusButtonClass =
+  "cursor-default rounded-xl border border-blue-900 bg-blue-900 px-6 py-3 text-sm font-semibold text-white shadow-sm ring-2 ring-blue-200 transition-colors";
 
 export function ContractorApplicationActions(props: ContractorApplicationActionsProps) {
   const { applicationId, viewerToken, initialStatus, initialInternalNotes } = props;
@@ -92,17 +94,29 @@ export function ContractorApplicationActions(props: ContractorApplicationActions
       </div>
 
       <div className="flex flex-wrap gap-3">
-        {statusActions.map((action) => (
-          <button
-            key={action.status}
-            className={action.status === "approved" ? primaryButtonClass : secondaryButtonClass}
-            disabled={isSaving || status === action.status}
-            onClick={() => updateApplication({ status: action.status })}
-            type="button"
-          >
-            {action.label}
-          </button>
-        ))}
+        {statusActions.map((action) => {
+          const isActive = status === action.status;
+
+          return (
+            <button
+              aria-pressed={isActive}
+              aria-disabled={isActive || isSaving}
+              key={action.status}
+              className={isActive ? activeStatusButtonClass : secondaryButtonClass}
+              disabled={isSaving}
+              onClick={() => {
+                if (isActive) {
+                  return;
+                }
+
+                updateApplication({ status: action.status });
+              }}
+              type="button"
+            >
+              {action.label}
+            </button>
+          );
+        })}
       </div>
 
       <form onSubmit={handleNotesSubmit}>
