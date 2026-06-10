@@ -150,6 +150,9 @@ export default function Home() {
                 <Step key={step.title} description={step.description} number={index + 1} title={step.title} />
               ))}
             </div>
+            <Link className={`${secondaryButtonClass} inline-flex`} href={`${REPORT_PAGE_PATH}#example-report`}>
+              View Example Report
+            </Link>
           </div>
         </section>
 
