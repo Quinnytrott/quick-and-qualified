@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { ContractorApplicationForm } from "@/components/ContractorApplicationForm";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
@@ -11,7 +10,6 @@ import {
   PHONE_TEL,
   SERVICE_AREA,
 } from "@/lib/business";
-import { secondaryButtonClass } from "@/lib/ui";
 
 export const metadata: Metadata = {
   title: `Contractor Partner Application | ${BUSINESS_NAME}`,
@@ -69,9 +67,6 @@ export default function ContractorsPage() {
                 </>
               ) : null}
             </p>
-            <Link className={`${secondaryButtonClass} mt-6 inline-flex`} href="/#book-report">
-              Homeowner Report Request
-            </Link>
           </div>
           <ContractorApplicationForm />
         </section>
