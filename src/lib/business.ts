@@ -6,6 +6,8 @@ export const SERVICE_AREA = "Georgina, Ontario + surrounding area";
 export const PHONE_DISPLAY = "289-338-9804";
 export const PHONE_TEL = "+12893389804";
 export const EMAIL = "info@quickandqualified.ca";
+export const HOME_PATH = "/";
+export const CONTRACTOR_APPLICATION_PATH = "/contractors";
 
 export const SECTION_IDS = {
   hero: "hero",
@@ -37,10 +39,10 @@ export type NavItem = {
 };
 
 export const NAV_ITEMS: NavItem[] = [
-  { label: "Report", href: `#${SECTION_IDS.reportIncluded}` },
-  { label: "How It Works", href: `#${SECTION_IDS.process}` },
-  { label: "Contractors", href: `#${SECTION_IDS.partnerNetwork}` },
-  { label: "Book Report", href: `#${SECTION_IDS.quote}` },
+  { label: "Report", href: `${HOME_PATH}#${SECTION_IDS.reportIncluded}` },
+  { label: "How It Works", href: `${HOME_PATH}#${SECTION_IDS.process}` },
+  { label: "Contractors", href: CONTRACTOR_APPLICATION_PATH },
+  { label: "Book Report", href: `${HOME_PATH}#${SECTION_IDS.quote}` },
 ];
 
 export const HERO_COPY = {
@@ -84,8 +86,55 @@ export const CONTRACTOR_CARD: AudienceCard = {
   description:
     "Apply to join Q2’s private contractor partner network for qualified exterior opportunities. Contractors receive better-documented homeowner requests, not cold leads from an open marketplace.",
   ctaLabel: CONTRACTOR_APPLY_LABEL,
-  href: `mailto:${EMAIL}?subject=Q2%20contractor%20partner%20application`,
+  href: CONTRACTOR_APPLICATION_PATH,
 };
+
+export const CONTRACTOR_PAGE_COPY = {
+  eyebrow: "Q2 Contractor Partner Network",
+  heading: "Apply to join Q2’s contractor partner network.",
+  description:
+    "Q2 connects homeowners with reviewed local exterior contractors after a Roof Condition Report is completed and the homeowner gives permission to share their information.",
+  trust:
+    "Q2 does not sell homeowner information to an open list of contractors. Contractor partners are reviewed before receiving homeowner opportunities.",
+  fitNote:
+    "Applications are reviewed for service area, exterior trade fit, communication standards, and available project types. This does not guarantee lead volume, exclusive territory, or contractor selection for every homeowner request.",
+};
+
+export const CONTRACTOR_APPLICATION_COPY = {
+  heading: "Contractor partner application",
+  description:
+    "Share the basics Q2 needs to review contractor fit for roof, eavestrough, fascia, soffit, and exterior repair opportunities.",
+  companyNameLabel: "Company name",
+  companyNamePlaceholder: "Company name",
+  contactNameLabel: "Contact name",
+  contactNamePlaceholder: "Primary contact",
+  emailLabel: "Email",
+  emailPlaceholder: "contractor@email.com",
+  phoneLabel: "Phone",
+  phonePlaceholder: "Best contact number",
+  serviceAreaLabel: "Service area",
+  serviceAreaPlaceholder: "Towns or regions you regularly serve",
+  servicesOfferedLabel: "Services offered",
+  servicesOfferedPlaceholder: "Roof repairs, eavestroughs, fascia, soffit, replacement work, etc.",
+  insuranceStatusLabel: "Insurance / WSIB status",
+  insuranceStatusPlaceholder: "Select one",
+  yearsInBusinessLabel: "Years in business",
+  yearsInBusinessPlaceholder: "Example: 8",
+  preferredJobTypesLabel: "Preferred job types",
+  preferredJobTypesPlaceholder: "Small repairs, replacement quotes, storm response, eavestrough work, etc.",
+  notesLabel: "Notes",
+  notesPlaceholder: "Trade details, crew capacity, scheduling preferences, or anything Q2 should know.",
+  submitLabel: "Submit Contractor Application",
+  successMessage:
+    "Thanks — your contractor partner application has been received. Q2 will review your service area, fit, and trade details before sharing homeowner opportunities.",
+};
+
+export const INSURANCE_STATUS_OPTIONS = [
+  "Insured and WSIB active",
+  "Insured, WSIB exempt",
+  "Insurance in place, WSIB pending",
+  "Need to discuss",
+];
 
 export const PROCESS_SECTION_COPY = {
   eyebrow: "How Q2 Works",

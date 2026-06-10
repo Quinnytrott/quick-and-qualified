@@ -1,6 +1,7 @@
 import {
   BUSINESS_NAME,
   CALL_TO_ACTION_LABEL,
+  HOME_PATH,
   NAV_ITEMS,
   PHONE_DISPLAY,
   PHONE_TEL,
@@ -36,7 +37,7 @@ export function Header() {
         </nav>
         <a
           className={`${secondaryButtonClass} inline-flex shrink-0 px-4 py-2 text-xs md:hidden`}
-          href={`#${SECTION_IDS.quote}`}
+          href={`${HOME_PATH}#${SECTION_IDS.quote}`}
         >
           Book Report
         </a>
