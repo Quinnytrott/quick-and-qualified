@@ -28,7 +28,7 @@ function toTelHref(phone: string): string {
 
 function toMailtoHref(email: string): string {
   const params = new URLSearchParams({
-    subject: "Quick & Qualified quote request",
+    subject: "Q2 Roof Condition Report request",
   });
 
   return `mailto:${email}?${params.toString()}`;

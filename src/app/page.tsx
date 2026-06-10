@@ -6,21 +6,26 @@ import { QuoteForm } from "@/components/QuoteForm";
 import { ServiceCard } from "@/components/ServiceCard";
 import { Step } from "@/components/Step";
 import {
-  BEST_FIT_JOBS,
+  AUDIENCE_SECTION_COPY,
   CALL_TO_ACTION_LABEL,
+  CLARITY_SECTION_COPY,
+  CONTRACTOR_CARD,
   HERO_COPY,
-  NOT_A_FIT_JOBS,
+  HOMEOWNER_CARD,
+  PARTNER_NETWORK_COPY,
   PHONE_DISPLAY,
   PHONE_TEL,
   PROCESS_SECTION_COPY,
   PROCESS_STEPS,
+  REPORT_INCLUDED_ITEMS,
+  REPORT_INCLUDED_SECTION_COPY,
   REQUEST_QUOTE_LABEL,
   SECTION_IDS,
   SERVICE_AREA,
   SERVICE_AREA_SECTION_COPY,
-  SERVICES,
-  SERVICES_SECTION_COPY,
   TRUST_ITEMS,
+  WHY_HOMEOWNERS_ITEMS,
+  WHY_HOMEOWNERS_SECTION_COPY,
 } from "@/lib/business";
 import { primaryButtonClass, secondaryButtonClass } from "@/lib/ui";
 
@@ -48,15 +53,22 @@ export default function Home() {
                 >
                   {REQUEST_QUOTE_LABEL}
                 </a>
-                {hasPhone ? (
-                  <a
-                    className={`${secondaryButtonClass} inline-flex items-center justify-center`}
-                    href={`tel:${PHONE_TEL}`}
-                  >
+                <a
+                  className={`${secondaryButtonClass} inline-flex items-center justify-center`}
+                  href={CONTRACTOR_CARD.href}
+                >
+                  {CONTRACTOR_CARD.ctaLabel}
+                </a>
+              </div>
+              {hasPhone ? (
+                <p className="mt-5 text-sm text-zinc-600">
+                  Prefer to talk first?{" "}
+                  <a className="font-medium text-blue-900 underline-offset-2 hover:underline" href={`tel:${PHONE_TEL}`}>
                     {CALL_TO_ACTION_LABEL} {PHONE_DISPLAY}
                   </a>
-                ) : null}
-              </div>
+                  .
+                </p>
+              ) : null}
             </div>
             <div className="w-full max-w-lg lg:justify-self-end">
               <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-zinc-200">
@@ -84,34 +96,33 @@ export default function Home() {
           ))}
         </section>
 
-        <section className="mt-20 space-y-6 md:mt-24" id={SECTION_IDS.services}>
+        <section className="mt-20 space-y-6 md:mt-24" id={SECTION_IDS.audience}>
           <div>
-            <p className="text-sm font-medium text-zinc-600">{SERVICES_SECTION_COPY.eyebrow}</p>
+            <p className="text-sm font-medium text-zinc-600">{AUDIENCE_SECTION_COPY.eyebrow}</p>
             <h2 className="mt-2 text-3xl font-semibold tracking-tight text-zinc-900">
-              {SERVICES_SECTION_COPY.heading}
+              {AUDIENCE_SECTION_COPY.heading}
             </h2>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {SERVICES.map((service) => (
-              <ServiceCard key={service.title} description={service.description} title={service.title} />
-            ))}
-          </div>
           <div className="grid gap-4 lg:grid-cols-2">
-            <article className="rounded-xl border border-zinc-200 bg-white p-6">
-              <h3 className="text-lg font-semibold text-zinc-900">{SERVICES_SECTION_COPY.bestFitTitle}</h3>
-              <ul className="mt-4 list-disc space-y-2 pl-5 text-sm text-zinc-600">
-                {BEST_FIT_JOBS.map((job) => (
-                  <li key={job}>{job}</li>
-                ))}
-              </ul>
+            <article className="rounded-xl border border-zinc-200 bg-white p-6 sm:p-8">
+              <p className="text-sm font-medium text-blue-900">{HOMEOWNER_CARD.eyebrow}</p>
+              <h3 className="mt-3 text-2xl font-semibold tracking-tight text-zinc-900">
+                {HOMEOWNER_CARD.title}
+              </h3>
+              <p className="mt-4 text-sm leading-7 text-zinc-600">{HOMEOWNER_CARD.description}</p>
+              <a className={`${primaryButtonClass} mt-6 inline-flex`} href={HOMEOWNER_CARD.href}>
+                {HOMEOWNER_CARD.ctaLabel}
+              </a>
             </article>
-            <article className="rounded-xl border border-zinc-200 bg-white p-6">
-              <h3 className="text-lg font-semibold text-zinc-900">{SERVICES_SECTION_COPY.notFitTitle}</h3>
-              <ul className="mt-4 list-disc space-y-2 pl-5 text-sm text-zinc-600">
-                {NOT_A_FIT_JOBS.map((job) => (
-                  <li key={job}>{job}</li>
-                ))}
-              </ul>
+            <article className="rounded-xl border border-zinc-200 bg-white p-6 sm:p-8">
+              <p className="text-sm font-medium text-blue-900">{CONTRACTOR_CARD.eyebrow}</p>
+              <h3 className="mt-3 text-2xl font-semibold tracking-tight text-zinc-900">
+                {CONTRACTOR_CARD.title}
+              </h3>
+              <p className="mt-4 text-sm leading-7 text-zinc-600">{CONTRACTOR_CARD.description}</p>
+              <a className={`${secondaryButtonClass} mt-6 inline-flex`} href={CONTRACTOR_CARD.href}>
+                {CONTRACTOR_CARD.ctaLabel}
+              </a>
             </article>
           </div>
         </section>
@@ -140,6 +151,69 @@ export default function Home() {
               ))}
             </div>
           </div>
+        </section>
+
+        <section className="mt-20 space-y-6 md:mt-24" id={SECTION_IDS.reportIncluded}>
+          <div className="max-w-3xl">
+            <p className="text-sm font-medium text-zinc-600">{REPORT_INCLUDED_SECTION_COPY.eyebrow}</p>
+            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-zinc-900">
+              {REPORT_INCLUDED_SECTION_COPY.heading}
+            </h2>
+            <p className="mt-4 text-sm leading-7 text-zinc-600">{REPORT_INCLUDED_SECTION_COPY.description}</p>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {REPORT_INCLUDED_ITEMS.map((item) => (
+              <ServiceCard key={item.title} description={item.description} title={item.title} />
+            ))}
+          </div>
+        </section>
+
+        <section className="mt-20 grid gap-6 md:mt-24 lg:grid-cols-[0.85fr_1.15fr]" id={SECTION_IDS.whyHomeowners}>
+          <div>
+            <p className="text-sm font-medium text-zinc-600">{WHY_HOMEOWNERS_SECTION_COPY.eyebrow}</p>
+            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-zinc-900">
+              {WHY_HOMEOWNERS_SECTION_COPY.heading}
+            </h2>
+          </div>
+          <ul className="grid gap-3 sm:grid-cols-2">
+            {WHY_HOMEOWNERS_ITEMS.map((item) => (
+              <li key={item} className="rounded-xl border border-zinc-200 bg-white p-4 text-sm leading-6 text-zinc-700">
+                {item}
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section className="mt-20 rounded-xl bg-blue-50 p-6 sm:p-8 md:mt-24 lg:p-10" id={SECTION_IDS.clarity}>
+          <div className="max-w-3xl">
+            <p className="text-sm font-medium text-zinc-600">{CLARITY_SECTION_COPY.eyebrow}</p>
+            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-zinc-900">
+              {CLARITY_SECTION_COPY.heading}
+            </h2>
+          </div>
+          <div className="mt-6 grid gap-4 lg:grid-cols-2">
+            <article className="rounded-xl border border-blue-100 bg-white p-6">
+              <h3 className="text-lg font-semibold text-zinc-900">What it is</h3>
+              <p className="mt-3 text-sm leading-7 text-zinc-600">{CLARITY_SECTION_COPY.isDescription}</p>
+            </article>
+            <article className="rounded-xl border border-blue-100 bg-white p-6">
+              <h3 className="text-lg font-semibold text-zinc-900">What it isn’t</h3>
+              <p className="mt-3 text-sm leading-7 text-zinc-600">{CLARITY_SECTION_COPY.isNotDescription}</p>
+            </article>
+          </div>
+        </section>
+
+        <section className="mt-20 md:mt-24" id={SECTION_IDS.partnerNetwork}>
+          <article className="rounded-xl border border-zinc-200 bg-white p-6 sm:p-8">
+            <p className="text-sm font-medium text-zinc-600">{PARTNER_NETWORK_COPY.eyebrow}</p>
+            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-zinc-900">
+              {PARTNER_NETWORK_COPY.heading}
+            </h2>
+            <p className="mt-4 max-w-3xl text-sm leading-7 text-zinc-600">{PARTNER_NETWORK_COPY.description}</p>
+            <a className={`${secondaryButtonClass} mt-6 inline-flex`} href={CONTRACTOR_CARD.href}>
+              {CONTRACTOR_CARD.ctaLabel}
+            </a>
+          </article>
         </section>
 
         <section className="mt-20 grid gap-6 lg:grid-cols-2 md:mt-24" id={SECTION_IDS.serviceArea}>

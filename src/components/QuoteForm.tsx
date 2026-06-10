@@ -124,7 +124,9 @@ export function QuoteForm() {
           <label className="text-sm font-medium text-zinc-800" htmlFor="files">
             Photos (optional)
           </label>
-          <p className="mt-1 text-sm text-zinc-600">Photos help us quote faster. Add 3–6 photos if you can.</p>
+          <p className="mt-1 text-sm text-zinc-600">
+            Photos help Q2 understand the visible concern before scheduling your report. Add 3–6 photos if you can.
+          </p>
           <input
             accept="image/*"
             className={fileFieldClassName}
@@ -140,7 +142,9 @@ export function QuoteForm() {
             <li>Downspout or drainage area (if relevant)</li>
           </ul>
           <p className="mt-2 text-sm text-zinc-600">Please do not climb on the roof. Ground-level photos are perfect.</p>
-          <p className="mt-2 text-sm text-zinc-600">If photos aren’t available, we can schedule an in-person assessment.</p>
+          <p className="mt-2 text-sm text-zinc-600">
+            If photos aren’t available, Q2 can still follow up about the best next step.
+          </p>
           {hasPhone ? (
             <p className="mt-3 text-sm text-zinc-600">
               If attaching photos doesn&apos;t work, just{" "}
@@ -186,7 +190,7 @@ export function QuoteForm() {
 
       {submitStatus === "success" ? (
         <p className="mt-4 text-sm text-zinc-700" role="status">
-          Thanks — we received your request. We’ll reply within 24 hours.
+          Thanks — we received your Roof Condition Report request. We’ll reply within 24 hours.
         </p>
       ) : null}
 

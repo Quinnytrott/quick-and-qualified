@@ -131,13 +131,13 @@ async function sendLeadNotification(params: {
 
   const html = `
     <h2 style="margin:0 0 12px;">New Q2 Lead</h2>
-    <p style="margin:0 0 16px;color:#52525b;">A new quote request was submitted.</p>
+    <p style="margin:0 0 16px;color:#52525b;">A new Roof Condition Report request was submitted.</p>
     <table cellpadding="6" cellspacing="0" style="border-collapse:collapse;">
       <tr><td><strong>Name</strong></td><td>${escapeHtml(lead.name)}</td></tr>
       <tr><td><strong>Phone</strong></td><td>${escapeHtml(lead.phone)}</td></tr>
       <tr><td><strong>Email</strong></td><td>${escapeHtml(lead.email)}</td></tr>
       <tr><td><strong>Address</strong></td><td>${escapeHtml(lead.address)}</td></tr>
-      <tr><td><strong>Job Type</strong></td><td>${escapeHtml(lead.jobType)}</td></tr>
+      <tr><td><strong>Reason For Report</strong></td><td>${escapeHtml(lead.jobType)}</td></tr>
       <tr><td><strong>Message</strong></td><td>${escapeHtml(lead.notes || "—")}</td></tr>
       <tr><td><strong>Photos Uploaded</strong></td><td>${escapeHtml(photosSummary)}</td></tr>
       <tr><td><strong>Lead Reference</strong></td><td>${escapeHtml(leadId)}</td></tr>
@@ -161,7 +161,7 @@ async function sendLeadNotification(params: {
     `Phone: ${lead.phone}`,
     `Email: ${lead.email}`,
     `Address: ${lead.address}`,
-    `Job Type: ${lead.jobType}`,
+    `Reason For Report: ${lead.jobType}`,
     `Message: ${lead.notes || "—"}`,
     `Photos Uploaded: ${photosSummary}`,
     `Lead Reference: ${leadId}`,
@@ -175,7 +175,7 @@ async function sendLeadNotification(params: {
     from: LEAD_NOTIFICATION_FROM,
     to: LEAD_NOTIFICATION_TO,
     replyTo: lead.email,
-    subject: `New Q2 Lead — ${lead.jobType} — ${lead.name}`,
+    subject: `New Q2 Roof Condition Report Request — ${lead.jobType} — ${lead.name}`,
     html,
     text,
   });

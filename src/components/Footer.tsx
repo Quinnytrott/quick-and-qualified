@@ -1,5 +1,6 @@
 import {
   BUSINESS_NAME,
+  EMAIL,
   FOOTER_COPY,
   PHONE_DISPLAY,
   PHONE_TEL,
@@ -25,6 +26,16 @@ export function Footer() {
             </a>
           </p>
         ) : null}
+        <p>
+          {FOOTER_COPY.emailLabel}:{" "}
+          <a
+            className="text-zinc-900 underline-offset-2 transition-colors hover:text-blue-900 hover:underline"
+            href={`mailto:${EMAIL}`}
+          >
+            {EMAIL}
+          </a>
+        </p>
+        <p className="max-w-4xl text-xs leading-6 text-zinc-500">{FOOTER_COPY.disclaimer}</p>
         <p className="text-xs text-zinc-500">
           © {new Date().getFullYear()} {BUSINESS_NAME}. {FOOTER_COPY.rightsLabel}
         </p>
