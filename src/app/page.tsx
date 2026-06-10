@@ -1,9 +1,9 @@
+import Link from "next/link";
 import Image from "next/image";
 import { FAQ } from "@/components/FAQ";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { QuoteForm } from "@/components/QuoteForm";
-import { ServiceCard } from "@/components/ServiceCard";
 import { Step } from "@/components/Step";
 import {
   AUDIENCE_SECTION_COPY,
@@ -17,8 +17,8 @@ import {
   PHONE_TEL,
   PROCESS_SECTION_COPY,
   PROCESS_STEPS,
-  REPORT_INCLUDED_ITEMS,
   REPORT_INCLUDED_SECTION_COPY,
+  REPORT_PAGE_PATH,
   REQUEST_QUOTE_LABEL,
   SECTION_IDS,
   SERVICE_AREA,
@@ -153,18 +153,18 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="mt-20 space-y-6 md:mt-24" id={SECTION_IDS.reportIncluded}>
-          <div className="max-w-3xl">
+        <section className="mt-20 md:mt-24" id={SECTION_IDS.reportIncluded}>
+          <div className="rounded-xl border border-zinc-200 bg-white p-6 sm:p-8">
             <p className="text-sm font-medium text-zinc-600">{REPORT_INCLUDED_SECTION_COPY.eyebrow}</p>
             <h2 className="mt-2 text-3xl font-semibold tracking-tight text-zinc-900">
               {REPORT_INCLUDED_SECTION_COPY.heading}
             </h2>
-            <p className="mt-4 text-sm leading-7 text-zinc-600">{REPORT_INCLUDED_SECTION_COPY.description}</p>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {REPORT_INCLUDED_ITEMS.map((item) => (
-              <ServiceCard key={item.title} description={item.description} title={item.title} />
-            ))}
+            <p className="mt-4 max-w-3xl text-sm leading-7 text-zinc-600">
+              {REPORT_INCLUDED_SECTION_COPY.description}
+            </p>
+            <Link className={`${secondaryButtonClass} mt-6 inline-flex`} href={REPORT_PAGE_PATH}>
+              {REPORT_INCLUDED_SECTION_COPY.ctaLabel}
+            </Link>
           </div>
         </section>
 

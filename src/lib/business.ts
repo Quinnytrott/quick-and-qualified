@@ -7,6 +7,7 @@ export const PHONE_DISPLAY = "289-338-9804";
 export const PHONE_TEL = "+12893389804";
 export const EMAIL = "info@quickandqualified.ca";
 export const HOME_PATH = "/";
+export const REPORT_PAGE_PATH = "/roof-condition-report";
 export const CONTRACTOR_APPLICATION_PATH = "/contractors";
 
 export const SECTION_IDS = {
@@ -39,7 +40,7 @@ export type NavItem = {
 };
 
 export const NAV_ITEMS: NavItem[] = [
-  { label: "Report", href: `${HOME_PATH}#${SECTION_IDS.reportIncluded}` },
+  { label: "Reports", href: REPORT_PAGE_PATH },
   { label: "How It Works", href: `${HOME_PATH}#${SECTION_IDS.process}` },
   { label: "Contractors", href: CONTRACTOR_APPLICATION_PATH },
   { label: "Book Report", href: `${HOME_PATH}#${SECTION_IDS.quote}` },
@@ -173,7 +174,8 @@ export const REPORT_INCLUDED_SECTION_COPY = {
   eyebrow: "What’s Included",
   heading: `What’s included in a ${REPORT_NAME}`,
   description:
-    "A practical visual documentation package built to help homeowners understand visible roof concerns and have a clearer contractor conversation.",
+    "Drone overview photos, exterior detail photos, visible-condition notes, basic measurement-supported context, urgency guidance, recommended next steps, and a contractor-ready summary.",
+  ctaLabel: "Learn about the report",
 };
 
 export type ReportItem = {
@@ -195,27 +197,27 @@ export const REPORT_INCLUDED_ITEMS: ReportItem[] = [
   {
     title: "Visible-condition notes",
     description:
-      "Plain-language notes on what can be seen from the exterior, including visible concerns, areas to review, and items that may need contractor attention.",
+      "Plain-language notes on visible roof and exterior concerns that may need contractor attention.",
   },
   {
     title: "Basic measurement-supported context",
     description:
-      "A simple measurement summary or roof-area context where available, used to help contractors understand the scope before visiting.",
+      "A simple roof-area or scope context where available, used to help homeowners and contractors understand the job before a site visit.",
   },
   {
     title: "Urgency category",
     description:
-      "Visible concerns are grouped as Monitor, Repair soon, or Urgent review recommended. This is not an engineering or insurance determination.",
+      "Simple categories such as Monitor, Repair soon, or Urgent review recommended.",
   },
   {
     title: "Recommended next step",
     description:
-      "Examples include keep for records and monitor, request a repair quote, request a replacement quote, or have a contractor review before the next storm or winter season.",
+      "Guidance such as keep for records, request a repair quote, request a replacement quote, or have a contractor review before the next storm or winter season.",
   },
   {
     title: "Contractor-ready summary",
     description:
-      "A clean summary that can be shared with a vetted local contractor so they can understand the issue faster.",
+      "A clean summary that can be shared with a vetted local exterior contractor.",
   },
   {
     title: "Optional contractor handoff",
