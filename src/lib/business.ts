@@ -42,12 +42,11 @@ export type NavItem = {
 };
 
 export const NAV_ITEMS: NavItem[] = [
+  { label: "Home", href: HOME_PATH },
   { label: "Reports", href: REPORT_PAGE_PATH },
   { label: "Homeowners", href: HOMEOWNER_PAGE_PATH },
   { label: "Real Estate Agents", href: REAL_ESTATE_AGENT_PAGE_PATH },
-  { label: "How It Works", href: `${HOME_PATH}#${SECTION_IDS.process}` },
   { label: "Contractors", href: CONTRACTOR_APPLICATION_PATH },
-  { label: "Request Check", href: `${HOME_PATH}#${SECTION_IDS.quote}` },
 ];
 
 export const HERO_COPY = {

@@ -45,7 +45,7 @@ const LIMITS = [
 export default function HomeownersPage() {
   return (
     <div className="min-h-screen bg-white text-zinc-900">
-      <Header ctaHref="#request-exterior-check" ctaLabel="Request Check" />
+      <Header />
       <main className="mx-auto max-w-6xl px-6 py-16 sm:px-8 lg:px-12">
         <section className="grid gap-10 lg:grid-cols-[1fr_0.9fr] lg:items-start">
           <div>
