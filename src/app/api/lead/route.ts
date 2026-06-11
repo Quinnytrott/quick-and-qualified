@@ -27,6 +27,8 @@ type LeadPayload = {
   address: string;
   jobType: string;
   notes: string;
+  source: string;
+  intent: string;
 };
 
 type LeadAttachment = {
@@ -131,13 +133,15 @@ async function sendLeadNotification(params: {
 
   const html = `
     <h2 style="margin:0 0 12px;">New Q2 Lead</h2>
-    <p style="margin:0 0 16px;color:#52525b;">A new Roof Condition Report request was submitted.</p>
+    <p style="margin:0 0 16px;color:#52525b;">A new Q2 exterior report request was submitted.</p>
     <table cellpadding="6" cellspacing="0" style="border-collapse:collapse;">
       <tr><td><strong>Name</strong></td><td>${escapeHtml(lead.name)}</td></tr>
       <tr><td><strong>Phone</strong></td><td>${escapeHtml(lead.phone)}</td></tr>
       <tr><td><strong>Email</strong></td><td>${escapeHtml(lead.email)}</td></tr>
       <tr><td><strong>Address</strong></td><td>${escapeHtml(lead.address)}</td></tr>
-      <tr><td><strong>Reason For Report</strong></td><td>${escapeHtml(lead.jobType)}</td></tr>
+      <tr><td><strong>Reason For Request</strong></td><td>${escapeHtml(lead.jobType)}</td></tr>
+      <tr><td><strong>Source</strong></td><td>${escapeHtml(lead.source)}</td></tr>
+      <tr><td><strong>Intent</strong></td><td>${escapeHtml(lead.intent)}</td></tr>
       <tr><td><strong>Message</strong></td><td>${escapeHtml(lead.notes || "—")}</td></tr>
       <tr><td><strong>Photos Uploaded</strong></td><td>${escapeHtml(photosSummary)}</td></tr>
       <tr><td><strong>Lead Reference</strong></td><td>${escapeHtml(leadId)}</td></tr>
@@ -161,7 +165,9 @@ async function sendLeadNotification(params: {
     `Phone: ${lead.phone}`,
     `Email: ${lead.email}`,
     `Address: ${lead.address}`,
-    `Reason For Report: ${lead.jobType}`,
+    `Reason For Request: ${lead.jobType}`,
+    `Source: ${lead.source}`,
+    `Intent: ${lead.intent}`,
     `Message: ${lead.notes || "—"}`,
     `Photos Uploaded: ${photosSummary}`,
     `Lead Reference: ${leadId}`,
@@ -175,7 +181,7 @@ async function sendLeadNotification(params: {
     from: LEAD_NOTIFICATION_FROM,
     to: LEAD_NOTIFICATION_TO,
     replyTo: lead.email,
-    subject: `New Q2 Roof Condition Report Request — ${lead.jobType} — ${lead.name}`,
+    subject: `New Q2 Exterior Report Request — ${lead.intent || lead.jobType} — ${lead.name}`,
     html,
     text,
   });
@@ -210,6 +216,8 @@ export async function POST(request: Request) {
     address: asTrimmedString(form.get("address")),
     jobType: asTrimmedString(form.get("jobType")),
     notes: asTrimmedString(form.get("notes")) || asTrimmedString(form.get("message")),
+    source: asTrimmedString(form.get("source")) || "q2_web_lead",
+    intent: asTrimmedString(form.get("intent")) || "q2_exterior_report_request",
   };
 
   const files = form.getAll("files");

@@ -26,6 +26,8 @@ type LeadDocument = {
   address?: string;
   jobType?: string;
   notes?: string;
+  source?: string;
+  intent?: string;
   attachments?: LeadAttachment[];
   measureAgentProjectId?: string;
   measureAgentProjectUrl?: string;
@@ -211,6 +213,8 @@ export async function POST(request: NextRequest, context: RouteContext) {
           originalLeadId: leadId,
           leadViewerUrl: viewerUrl,
           leadJobType: trimOrNull(lead.jobType),
+          leadSource: trimOrNull(lead.source),
+          leadIntent: trimOrNull(lead.intent),
           leadNotes: trimOrNull(lead.notes),
           supportingPhotos,
           detailPhotos: supportingPhotos.map((photo) => ({
@@ -228,7 +232,8 @@ export async function POST(request: NextRequest, context: RouteContext) {
           q2Lead: {
             leadId,
             viewerUrl,
-            source: "q2_lead",
+            source: trimOrNull(lead.source) || "q2_lead",
+            intent: trimOrNull(lead.intent),
             jobType: trimOrNull(lead.jobType),
             notes: trimOrNull(lead.notes),
             attachments: supportingPhotos.map((photo) => ({

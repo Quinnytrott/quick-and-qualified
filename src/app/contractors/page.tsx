@@ -10,12 +10,22 @@ import {
   PHONE_TEL,
   SERVICE_AREA,
 } from "@/lib/business";
+import { primaryButtonClass } from "@/lib/ui";
 
 export const metadata: Metadata = {
-  title: `Contractor Partner Application | ${BUSINESS_NAME}`,
+  title: `Q2 Lead Qualification Report | ${BUSINESS_NAME}`,
   description:
-    "Apply to join Q2’s reviewed local exterior contractor partner network for homeowner opportunities after Roof Condition Reports.",
+    "Apply to partner with Q2 for better-qualified exterior opportunities with photos, visible condition notes, urgency, and homeowner context.",
 };
+
+const CONTRACTOR_REPORT_ITEMS = [
+  "Drone and exterior photos where safe, legal, and appropriate",
+  "Visible condition notes",
+  "Rough scope and exterior trade context",
+  "Urgency and timing notes",
+  "Homeowner context and permission-based lead handoff",
+  "Overflow exterior documentation support when Q2 is a fit",
+];
 
 export default function ContractorsPage() {
   const hasPhone = Boolean(PHONE_DISPLAY && PHONE_TEL);
@@ -35,6 +45,11 @@ export default function ContractorsPage() {
             <p className="mt-4 text-lg leading-8 text-zinc-600">
               {CONTRACTOR_PAGE_COPY.description}
             </p>
+            <div className="mt-8">
+              <a className={`${primaryButtonClass} inline-flex justify-center`} href="#contractor-application">
+                Apply to Partner With Q2
+              </a>
+            </div>
             <div className="mt-8 space-y-4 rounded-xl bg-blue-50 p-6">
               <p className="text-sm leading-7 text-zinc-700">
                 {CONTRACTOR_PAGE_COPY.trust}
@@ -42,6 +57,14 @@ export default function ContractorsPage() {
               <p className="text-sm leading-7 text-zinc-700">
                 {CONTRACTOR_PAGE_COPY.fitNote}
               </p>
+            </div>
+            <div className="mt-8">
+              <h2 className="text-lg font-semibold text-zinc-900">What contractors can receive</h2>
+              <ul className="mt-4 list-disc space-y-2 pl-5 text-sm leading-6 text-zinc-600">
+                {CONTRACTOR_REPORT_ITEMS.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
             </div>
             <div className="mt-8">
               <h2 className="text-lg font-semibold text-zinc-900">What Q2 reviews</h2>
@@ -68,7 +91,9 @@ export default function ContractorsPage() {
               ) : null}
             </p>
           </div>
-          <ContractorApplicationForm />
+          <div id="contractor-application">
+            <ContractorApplicationForm />
+          </div>
         </section>
       </main>
       <Footer />

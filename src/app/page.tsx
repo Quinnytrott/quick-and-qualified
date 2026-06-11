@@ -17,9 +17,9 @@ import {
   PHONE_TEL,
   PROCESS_SECTION_COPY,
   PROCESS_STEPS,
+  REAL_ESTATE_AGENT_CARD,
   REPORT_INCLUDED_SECTION_COPY,
   REPORT_PAGE_PATH,
-  REQUEST_QUOTE_LABEL,
   SECTION_IDS,
   SERVICE_AREA,
   SERVICE_AREA_SECTION_COPY,
@@ -28,6 +28,24 @@ import {
   WHY_HOMEOWNERS_SECTION_COPY,
 } from "@/lib/business";
 import { primaryButtonClass, secondaryButtonClass } from "@/lib/ui";
+
+const HERO_LANE_LINKS = [
+  {
+    label: "Homeowners",
+    ctaLabel: HOMEOWNER_CARD.ctaLabel,
+    href: HOMEOWNER_CARD.href,
+  },
+  {
+    label: "Real Estate Agents",
+    ctaLabel: REAL_ESTATE_AGENT_CARD.ctaLabel,
+    href: REAL_ESTATE_AGENT_CARD.href,
+  },
+  {
+    label: "Contractors",
+    ctaLabel: CONTRACTOR_CARD.ctaLabel,
+    href: CONTRACTOR_CARD.href,
+  },
+];
 
 export default function Home() {
   const hasPhone = Boolean(PHONE_DISPLAY && PHONE_TEL);
@@ -46,19 +64,23 @@ export default function Home() {
                 {HERO_COPY.heading}
               </h1>
               <p className="mt-4 max-w-prose text-lg leading-8 text-zinc-600">{HERO_COPY.description}</p>
-              <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-                <a
-                  className={`${primaryButtonClass} inline-flex items-center justify-center`}
-                  href={`#${SECTION_IDS.quote}`}
-                >
-                  {REQUEST_QUOTE_LABEL}
-                </a>
-                <a
-                  className={`${secondaryButtonClass} inline-flex items-center justify-center`}
-                  href={CONTRACTOR_CARD.href}
-                >
-                  {CONTRACTOR_CARD.ctaLabel}
-                </a>
+              <div className="mt-8 rounded-xl border border-blue-100 bg-blue-50 p-4">
+                <p className="text-sm font-semibold text-zinc-900">Choose your report lane</p>
+                <p className="mt-1 text-sm leading-6 text-zinc-600">
+                  Exterior reports for homeowners, listing prep, and contractor lead qualification.
+                </p>
+                <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                  {HERO_LANE_LINKS.map((lane) => (
+                    <Link
+                      className="rounded-lg border border-blue-100 bg-white p-3 text-left transition hover:border-blue-200 hover:shadow-sm"
+                      href={lane.href}
+                      key={lane.label}
+                    >
+                      <span className="block text-sm font-semibold text-zinc-900">{lane.label}</span>
+                      <span className="mt-1 block text-sm font-medium text-blue-900">{lane.ctaLabel}</span>
+                    </Link>
+                  ))}
+                </div>
               </div>
               {hasPhone ? (
                 <p className="mt-5 text-sm text-zinc-600">
@@ -103,16 +125,26 @@ export default function Home() {
               {AUDIENCE_SECTION_COPY.heading}
             </h2>
           </div>
-          <div className="grid gap-4 lg:grid-cols-2">
+          <div className="grid gap-4 lg:grid-cols-3">
             <article className="rounded-xl border border-zinc-200 bg-white p-6 sm:p-8">
               <p className="text-sm font-medium text-blue-900">{HOMEOWNER_CARD.eyebrow}</p>
               <h3 className="mt-3 text-2xl font-semibold tracking-tight text-zinc-900">
                 {HOMEOWNER_CARD.title}
               </h3>
               <p className="mt-4 text-sm leading-7 text-zinc-600">{HOMEOWNER_CARD.description}</p>
-              <a className={`${primaryButtonClass} mt-6 inline-flex`} href={HOMEOWNER_CARD.href}>
+              <Link className={`${primaryButtonClass} mt-6 inline-flex`} href={HOMEOWNER_CARD.href}>
                 {HOMEOWNER_CARD.ctaLabel}
-              </a>
+              </Link>
+            </article>
+            <article className="rounded-xl border border-zinc-200 bg-white p-6 sm:p-8">
+              <p className="text-sm font-medium text-blue-900">{REAL_ESTATE_AGENT_CARD.eyebrow}</p>
+              <h3 className="mt-3 text-2xl font-semibold tracking-tight text-zinc-900">
+                {REAL_ESTATE_AGENT_CARD.title}
+              </h3>
+              <p className="mt-4 text-sm leading-7 text-zinc-600">{REAL_ESTATE_AGENT_CARD.description}</p>
+              <Link className={`${secondaryButtonClass} mt-6 inline-flex`} href={REAL_ESTATE_AGENT_CARD.href}>
+                {REAL_ESTATE_AGENT_CARD.ctaLabel}
+              </Link>
             </article>
             <article className="rounded-xl border border-zinc-200 bg-white p-6 sm:p-8">
               <p className="text-sm font-medium text-blue-900">{CONTRACTOR_CARD.eyebrow}</p>
@@ -120,9 +152,9 @@ export default function Home() {
                 {CONTRACTOR_CARD.title}
               </h3>
               <p className="mt-4 text-sm leading-7 text-zinc-600">{CONTRACTOR_CARD.description}</p>
-              <a className={`${secondaryButtonClass} mt-6 inline-flex`} href={CONTRACTOR_CARD.href}>
+              <Link className={`${secondaryButtonClass} mt-6 inline-flex`} href={CONTRACTOR_CARD.href}>
                 {CONTRACTOR_CARD.ctaLabel}
-              </a>
+              </Link>
             </article>
           </div>
         </section>
