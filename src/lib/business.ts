@@ -1,19 +1,21 @@
 export const BUSINESS_NAME = "Quick & Qualified Exteriors";
 export const SHORT_BUSINESS_NAME = "Q2";
-export const REPORT_NAME = "Q2 Roof Condition Report";
-export const TAGLINE = "Roof Condition Reports • Contractor Handoff";
+export const REPORT_NAME = "Q2 Exterior Reports";
+export const TAGLINE = "Exterior Reports • Contractor Handoff";
 export const SERVICE_AREA = "Georgina, Ontario + surrounding area";
 export const PHONE_DISPLAY = "289-338-9804";
 export const PHONE_TEL = "+12893389804";
 export const EMAIL = "info@quickandqualified.ca";
 export const HOME_PATH = "/";
 export const REPORT_PAGE_PATH = "/roof-condition-report";
+export const HOMEOWNER_PAGE_PATH = "/homeowners";
+export const REAL_ESTATE_AGENT_PAGE_PATH = "/real-estate-agents";
 export const CONTRACTOR_APPLICATION_PATH = "/contractors";
 
 export const SECTION_IDS = {
   hero: "hero",
   trust: "trust",
-  audience: "homeowners-contractors",
+  audience: "exterior-report-lanes",
   reportIncluded: "roof-condition-report",
   process: "how-it-works",
   whyHomeowners: "why-homeowners-use-q2",
@@ -25,13 +27,13 @@ export const SECTION_IDS = {
 } as const;
 
 export const CALL_TO_ACTION_LABEL = "Call / Text";
-export const REQUEST_QUOTE_LABEL = "Book a Roof Condition Report";
-export const CONTRACTOR_APPLY_LABEL = "Apply as a Contractor";
+export const REQUEST_QUOTE_LABEL = "Request an Exterior Check";
+export const CONTRACTOR_APPLY_LABEL = "Partner With Q2";
 
 export const SITE_METADATA = {
   title: `${REPORT_NAME} | ${BUSINESS_NAME}`,
   description:
-    "Homeowner-requested roof condition reports with drone photos, exterior photo documentation, visible-condition notes, and optional vetted contractor handoff in Georgina, Ontario.",
+    "Drone-based exterior condition reports, visible-condition notes, and qualified contractor handoffs for homeowners, real estate agents, and contractors in Georgina, Ontario.",
 };
 
 export type NavItem = {
@@ -41,16 +43,18 @@ export type NavItem = {
 
 export const NAV_ITEMS: NavItem[] = [
   { label: "Reports", href: REPORT_PAGE_PATH },
+  { label: "Homeowners", href: HOMEOWNER_PAGE_PATH },
+  { label: "Real Estate Agents", href: REAL_ESTATE_AGENT_PAGE_PATH },
   { label: "How It Works", href: `${HOME_PATH}#${SECTION_IDS.process}` },
   { label: "Contractors", href: CONTRACTOR_APPLICATION_PATH },
-  { label: "Book Report", href: `${HOME_PATH}#${SECTION_IDS.quote}` },
+  { label: "Request Check", href: `${HOME_PATH}#${SECTION_IDS.quote}` },
 ];
 
 export const HERO_COPY = {
   eyebrow: REPORT_NAME,
-  heading: "Get a clear Roof Condition Report before you call around for quotes.",
+  heading: "Make faster exterior decisions with first-look condition reports.",
   description:
-    "Q2 documents the visible condition of your roof with drone photos, exterior photos, notes, and a contractor-ready summary — then connects you with a vetted local exterior contractor if repairs are needed.",
+    "Q2 helps homeowners, real estate agents, and contractors make faster exterior decisions with drone-based condition reports, visible condition notes, urgency context, and qualified contractor handoffs.",
 };
 
 export const TRUST_ITEMS = [
@@ -60,8 +64,8 @@ export const TRUST_ITEMS = [
 ];
 
 export const AUDIENCE_SECTION_COPY = {
-  eyebrow: "For Homeowners And Contractors",
-  heading: "Clarity before the quote conversation",
+  eyebrow: "Q2 Exterior Reports",
+  heading: "Exterior reports for every side of the job",
 };
 
 export type AudienceCard = {
@@ -73,32 +77,41 @@ export type AudienceCard = {
 };
 
 export const HOMEOWNER_CARD: AudienceCard = {
-  eyebrow: "Homeowners",
-  title: "Know what’s happening on your roof before you chase quotes.",
+  eyebrow: "Q2 Exterior Check",
+  title: "For Homeowners",
   description:
-    "Q2 helps homeowners understand the visible condition of their roof using photos, notes, and a simple report. Keep it for homeowner records or share it with a vetted contractor when a repair or replacement quote is needed.",
+    "Know what is happening before calling multiple contractors. Get drone photos, visible condition notes, and a clear next step.",
   ctaLabel: REQUEST_QUOTE_LABEL,
-  href: `#${SECTION_IDS.quote}`,
+  href: HOMEOWNER_PAGE_PATH,
+};
+
+export const REAL_ESTATE_AGENT_CARD: AudienceCard = {
+  eyebrow: "Q2 Pre-Listing Exterior Snapshot",
+  title: "For Real Estate Agents",
+  description:
+    "Prepare listings with roof and exterior snapshots that help avoid surprises and support repair decisions.",
+  ctaLabel: "Book a Pre-Listing Snapshot",
+  href: REAL_ESTATE_AGENT_PAGE_PATH,
 };
 
 export const CONTRACTOR_CARD: AudienceCard = {
-  eyebrow: "Contractors",
-  title: "Qualified exterior opportunities with better documentation.",
+  eyebrow: "Q2 Lead Qualification Report",
+  title: "For Contractors",
   description:
-    "Apply to join Q2’s private contractor partner network for qualified exterior opportunities. Contractors receive better-documented homeowner requests, not cold leads from an open marketplace.",
+    "Receive better-qualified exterior opportunities with photos, notes, urgency, and homeowner context.",
   ctaLabel: CONTRACTOR_APPLY_LABEL,
   href: CONTRACTOR_APPLICATION_PATH,
 };
 
 export const CONTRACTOR_PAGE_COPY = {
-  eyebrow: "Q2 Contractor Partner Network",
-  heading: "Apply to join Q2’s contractor partner network.",
+  eyebrow: "Q2 Lead Qualification Report",
+  heading: "Better-qualified exterior opportunities before the truck roll.",
   description:
-    "Q2 connects homeowners with reviewed local exterior contractors after a Roof Condition Report is completed and the homeowner gives permission to share their information.",
+    "Q2 documents first-look exterior requests with drone photos, visible condition notes, rough scope context, urgency, and homeowner details before handing qualified opportunities to reviewed contractor partners.",
   trust:
-    "Q2 does not sell homeowner information to an open list of contractors. Contractor partners are reviewed before receiving homeowner opportunities.",
+    "Q2 does not sell homeowner information to an open list of contractors. Contractor partners are reviewed before receiving permission-based homeowner opportunities.",
   fitNote:
-    "Applications are reviewed for service area, exterior trade fit, communication standards, and available project types. This does not guarantee lead volume, exclusive territory, or contractor selection for every homeowner request.",
+    "Applications are reviewed for service area, exterior trade fit, communication standards, and available project types. This does not guarantee lead volume, exclusive territory, lead quality, job award, or contractor selection for every homeowner request.",
 };
 
 export const CONTRACTOR_APPLICATION_COPY = {
@@ -156,7 +169,7 @@ export const PROCESS_STEPS: ProcessStep[] = [
   {
     title: "Report",
     description:
-      "The visible roof condition is organized into a simple homeowner report.",
+      "Visible exterior conditions are organized into a simple customer report.",
   },
   {
     title: "Review",
@@ -166,13 +179,13 @@ export const PROCESS_STEPS: ProcessStep[] = [
   {
     title: "Connect",
     description:
-      "With permission, Q2 sends the package to a vetted contractor partner.",
+      "With permission, Q2 sends the package to a reviewed contractor partner.",
   },
 ];
 
 export const REPORT_INCLUDED_SECTION_COPY = {
   eyebrow: "What’s Included",
-  heading: `What’s included in a ${REPORT_NAME}`,
+  heading: `What’s included in ${REPORT_NAME}`,
   description:
     "Drone overview photos, exterior detail photos, visible-condition notes, basic measurement-supported context, urgency guidance, recommended next steps, and a contractor-ready summary.",
   ctaLabel: "Learn about the report",
@@ -217,7 +230,7 @@ export const REPORT_INCLUDED_ITEMS: ReportItem[] = [
   {
     title: "Contractor-ready summary",
     description:
-      "A clean summary that can be shared with a vetted local exterior contractor.",
+      "A clean summary that can be shared with a reviewed local exterior contractor.",
   },
   {
     title: "Optional contractor handoff",
@@ -244,7 +257,7 @@ export const CLARITY_SECTION_COPY = {
   eyebrow: "What It Is / What It Isn’t",
   heading: "Built for clarity, with clear limits.",
   isDescription:
-    "A Q2 Roof Condition Report is visual documentation of what can be seen from the exterior. It is designed to help homeowners understand visible roof concerns and prepare for contractor conversations.",
+    "A Q2 exterior report is first-look visual documentation of what can be seen from the exterior. It is designed to help homeowners, agents, and contractors understand visible concerns and prepare for the next conversation.",
   isNotDescription:
     "It is not a structural engineering report, home inspection, insurance adjustment, code-compliance review, workmanship warranty, or guarantee that hidden damage does or does not exist. Contractor quotes, repairs, warranties, and project execution are provided by independent contractor partners unless otherwise stated.",
 };
@@ -259,7 +272,7 @@ export const PARTNER_NETWORK_COPY = {
 export const SERVICE_AREA_SECTION_COPY = {
   eyebrow: "Local Service Area",
   description:
-    "Q2 provides roof condition reports and contractor handoff support in Georgina, Ontario and the surrounding area. Share your address, photos if available, and a short description so we can confirm fit and next steps.",
+    "Q2 provides exterior reports and contractor handoff support in Georgina, Ontario and the surrounding area. Share your address, photos if available, and a short description so we can confirm fit and next steps.",
 };
 
 export const FAQ_SECTION_COPY = {
@@ -275,7 +288,7 @@ export const FAQ_ITEMS: FAQItem[] = [
   {
     question: "Is this a home inspection or engineering report?",
     answer:
-      "No. A Q2 Roof Condition Report documents visible exterior conditions only. It is not a structural engineering report, home inspection, code-compliance review, or warranty.",
+      "No. A Q2 exterior report documents visible exterior conditions only. It is not a structural engineering report, home inspection, code-compliance review, or warranty.",
   },
   {
     question: "Do I need to climb on the roof?",
@@ -285,7 +298,7 @@ export const FAQ_ITEMS: FAQItem[] = [
   {
     question: "What happens after I receive the report?",
     answer:
-      "You can keep it for homeowner records, monitor visible concerns, request a repair or replacement quote, or ask Q2 to send the package to a vetted local contractor partner.",
+      "You can keep it for homeowner records, monitor visible concerns, request a repair or replacement quote, or ask Q2 to send the package to a reviewed local contractor partner.",
   },
   {
     question: "Will my information be shared with contractors?",
@@ -311,12 +324,12 @@ export const QUOTE_FORM_COPY = {
   emailPlaceholder: "your@email.com",
   addressLabel: "Address",
   addressPlaceholder: "Property address",
-  jobTypeLabel: "Reason For Report",
+  jobTypeLabel: "Reason For Request",
   jobTypePlaceholder: "Select one",
   notesLabel: "Notes",
   notesPlaceholder:
     "Describe what you can see, recent weather, leaks, timing, or anything else helpful.",
-  submitLabel: "Submit Report Request",
+  submitLabel: "Submit Exterior Check Request",
 };
 
 export const JOB_TYPES = [
@@ -324,6 +337,7 @@ export const JOB_TYPES = [
   "Leak or water entry concern",
   "Storm, wind, hail, or tree-related exterior concern",
   "Eavestrough, fascia, or roof-edge concern",
+  "Pre-listing exterior snapshot",
   "Pre-quote documentation",
   "Homeowner records / monitor",
   "Other",
@@ -334,5 +348,5 @@ export const FOOTER_COPY = {
   emailLabel: "Email",
   rightsLabel: "All rights reserved.",
   disclaimer:
-    "Q2 provides visual exterior documentation, roof condition reports, and contractor referral services. Reports are based on visible exterior conditions only. Contractor quotes, repair work, warranties, and project execution are provided by independent contractor partners unless otherwise stated. Q2 only shares homeowner information with contractor partners after homeowner permission.",
+    "Q2 provides visual exterior documentation, exterior reports, and contractor referral services. Reports are based on visible exterior conditions only. Contractor quotes, repair work, warranties, and project execution are provided by independent contractor partners unless otherwise stated. Q2 only shares customer information with contractor partners after permission.",
 };

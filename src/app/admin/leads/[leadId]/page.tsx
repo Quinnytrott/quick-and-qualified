@@ -24,6 +24,8 @@ type LeadDocument = {
   address?: string;
   jobType?: string;
   notes?: string;
+  source?: string;
+  intent?: string;
   createdAt?: Timestamp | Date | string | null;
   attachments?: LeadAttachment[];
   conversionStatus?: string;
@@ -154,6 +156,14 @@ export default async function LeadDetailPage(props: LeadPageProps) {
               <div>
                 <dt className="text-xs font-medium uppercase tracking-[0.14em] text-zinc-500">Job Type</dt>
                 <dd className="mt-1 text-sm text-zinc-900">{lead.jobType || "—"}</dd>
+              </div>
+              <div>
+                <dt className="text-xs font-medium uppercase tracking-[0.14em] text-zinc-500">Lead Source</dt>
+                <dd className="mt-1 text-sm text-zinc-900">{lead.source || "—"}</dd>
+              </div>
+              <div>
+                <dt className="text-xs font-medium uppercase tracking-[0.14em] text-zinc-500">Intent</dt>
+                <dd className="mt-1 text-sm text-zinc-900">{lead.intent || "—"}</dd>
               </div>
               <div>
                 <dt className="text-xs font-medium uppercase tracking-[0.14em] text-zinc-500">Created At</dt>

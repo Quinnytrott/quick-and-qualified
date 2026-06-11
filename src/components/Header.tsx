@@ -10,8 +10,17 @@ import {
 } from "@/lib/business";
 import { linkClass, secondaryButtonClass } from "@/lib/ui";
 
-export function Header() {
+type HeaderProps = {
+  ctaHref?: string;
+  ctaLabel?: string;
+};
+
+export function Header({
+  ctaHref = `${HOME_PATH}#${SECTION_IDS.quote}`,
+  ctaLabel = "Request Check",
+}: HeaderProps) {
   const hasPhone = Boolean(PHONE_DISPLAY && PHONE_TEL);
+  const defaultCtaHref = `${HOME_PATH}#${SECTION_IDS.quote}`;
 
   return (
     <header className="sticky top-0 z-20 border-b border-zinc-200 bg-white/80 backdrop-blur">
@@ -20,12 +29,20 @@ export function Header() {
           <p className="text-sm font-semibold text-zinc-900">{BUSINESS_NAME}</p>
           <p className="text-xs text-zinc-600">{TAGLINE}</p>
         </div>
-        <nav className="hidden items-center gap-6 text-sm text-zinc-700 md:flex">
-          {NAV_ITEMS.map((item) => (
-            <a key={item.href} className={`${linkClass} transition-colors`} href={item.href}>
-              {item.label}
-            </a>
-          ))}
+        <nav className="hidden items-center gap-4 text-sm text-zinc-700 lg:flex xl:gap-6">
+          {NAV_ITEMS.map((item) => {
+            const isCtaItem = item.href === defaultCtaHref;
+
+            return (
+              <a
+                key={item.href}
+                className={`${linkClass} transition-colors`}
+                href={isCtaItem ? ctaHref : item.href}
+              >
+                {isCtaItem ? ctaLabel : item.label}
+              </a>
+            );
+          })}
           {hasPhone ? (
             <a
               className={`${secondaryButtonClass} px-4 py-2`}
@@ -36,10 +53,10 @@ export function Header() {
           ) : null}
         </nav>
         <a
-          className={`${secondaryButtonClass} inline-flex shrink-0 px-4 py-2 text-xs md:hidden`}
-          href={`${HOME_PATH}#${SECTION_IDS.quote}`}
+          className={`${secondaryButtonClass} inline-flex shrink-0 px-4 py-2 text-xs lg:hidden`}
+          href={ctaHref}
         >
-          Book Report
+          {ctaLabel}
         </a>
       </div>
     </header>

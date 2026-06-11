@@ -18,7 +18,7 @@ import { primaryButtonClass, secondaryButtonClass } from "@/lib/ui";
 export const metadata: Metadata = {
   title: `${REPORT_NAME} | ${BUSINESS_NAME}`,
   description:
-    "Drone-supported visible roof condition documentation, photo notes, urgency guidance, and contractor-ready summaries for homeowners in Georgina and surrounding areas.",
+    "Drone-supported visible exterior condition documentation, photo notes, urgency guidance, and contractor-ready summaries for homeowners, agents, and contractors in Georgina and surrounding areas.",
 };
 
 const WHO_ITS_FOR = [
@@ -48,7 +48,7 @@ const REPORT_STEPS = [
   },
   {
     title: "Share",
-    description: "With permission, Q2 can share the package with a vetted contractor partner.",
+    description: "With permission, Q2 can share the package with a reviewed contractor partner.",
   },
 ];
 
@@ -73,13 +73,13 @@ export default function RoofConditionReportPage() {
         <section className="grid gap-10 lg:grid-cols-[1fr_0.85fr] lg:items-start">
           <div>
             <p className="inline-flex rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-sm font-medium text-blue-900">
-              Roof Condition Reports
+              Q2 Exterior Reports
             </p>
             <h1 className="mt-4 text-4xl font-semibold leading-tight tracking-tight text-zinc-900 md:text-5xl">
               {REPORT_NAME}
             </h1>
             <p className="mt-4 max-w-2xl text-lg leading-8 text-zinc-600">
-              Clear visual roof documentation for homeowners who want to understand visible roof concerns before calling around for quotes.
+              Clear visual exterior documentation for homeowners, agents, and contractors who want to understand visible concerns before choosing the next step.
             </p>
             <div className="mt-8 flex flex-col gap-4 sm:flex-row">
               <Link className={`${primaryButtonClass} inline-flex justify-center`} href={`/#${SECTION_IDS.quote}`}>
@@ -192,7 +192,7 @@ export default function RoofConditionReportPage() {
               Ready to get roof clarity?
             </h2>
             <p className="mt-3 max-w-2xl text-sm leading-7 text-zinc-600">
-              Start with a Roof Condition Report request. Q2 will follow up to confirm fit, timing, and the best next step.
+              Start with an exterior report request. Q2 will follow up to confirm fit, timing, and the best next step.
             </p>
             <Link className={`${primaryButtonClass} mt-6 inline-flex`} href={`/#${SECTION_IDS.quote}`}>
               {REQUEST_QUOTE_LABEL}

@@ -6,12 +6,36 @@ import { primaryButtonClass } from "@/lib/ui";
 
 type SubmitStatus = "idle" | "success" | "error";
 
+type QuoteFormProps = {
+  source?: string;
+  intent?: string;
+  heading?: string;
+  description?: string;
+  jobTypeLabel?: string;
+  jobTypePlaceholder?: string;
+  jobTypes?: string[];
+  defaultJobType?: string;
+  submitLabel?: string;
+  successMessage?: string;
+};
+
 const fieldClassName =
   "mt-2 w-full rounded-xl border border-zinc-300 bg-white px-4 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 transition-[border-color,box-shadow] focus:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-200";
 const fileFieldClassName =
   "mt-2 w-full rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-700 transition-[border-color,box-shadow] file:mr-3 file:rounded-lg file:border-0 file:bg-zinc-100 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-zinc-800 file:transition-colors hover:file:bg-zinc-200 focus:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-200";
 
-export function QuoteForm() {
+export function QuoteForm({
+  source = "q2_homepage_quote_form",
+  intent = "q2_exterior_report_request",
+  heading = QUOTE_FORM_COPY.heading,
+  description = QUOTE_FORM_COPY.description,
+  jobTypeLabel = QUOTE_FORM_COPY.jobTypeLabel,
+  jobTypePlaceholder = QUOTE_FORM_COPY.jobTypePlaceholder,
+  jobTypes = JOB_TYPES,
+  defaultJobType = "",
+  submitLabel = QUOTE_FORM_COPY.submitLabel,
+  successMessage = "Thanks — we received your Q2 exterior report request. We’ll reply within 24 hours.",
+}: QuoteFormProps) {
   const hasPhone = Boolean(PHONE_TEL);
   const [submitStatus, setSubmitStatus] = useState<SubmitStatus>("idle");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -50,8 +74,10 @@ export function QuoteForm() {
       encType="multipart/form-data"
       onSubmit={handleSubmit}
     >
-      <h2 className="text-2xl font-semibold tracking-tight text-zinc-900">{QUOTE_FORM_COPY.heading}</h2>
-      <p className="mt-2 text-sm text-zinc-600">{QUOTE_FORM_COPY.description}</p>
+      <input name="source" type="hidden" defaultValue={source} />
+      <input name="intent" type="hidden" defaultValue={intent} />
+      <h2 className="text-2xl font-semibold tracking-tight text-zinc-900">{heading}</h2>
+      <p className="mt-2 text-sm text-zinc-600">{description}</p>
       <div className="mt-6 grid gap-5 sm:grid-cols-2">
         <div>
           <label className="text-sm font-medium text-zinc-800" htmlFor="name">
@@ -107,13 +133,13 @@ export function QuoteForm() {
         </div>
         <div className="sm:col-span-2">
           <label className="text-sm font-medium text-zinc-800" htmlFor="jobType">
-            {QUOTE_FORM_COPY.jobTypeLabel}
+            {jobTypeLabel}
           </label>
-          <select required className={fieldClassName} defaultValue="" id="jobType" name="jobType">
+          <select required className={fieldClassName} defaultValue={defaultJobType} id="jobType" name="jobType">
             <option disabled value="">
-              {QUOTE_FORM_COPY.jobTypePlaceholder}
+              {jobTypePlaceholder}
             </option>
-            {JOB_TYPES.map((jobType) => (
+            {jobTypes.map((jobType) => (
               <option key={jobType} value={jobType}>
                 {jobType}
               </option>
@@ -185,12 +211,12 @@ export function QuoteForm() {
         disabled={isSubmitting}
         type="submit"
       >
-        {isSubmitting ? "Submitting..." : QUOTE_FORM_COPY.submitLabel}
+        {isSubmitting ? "Submitting..." : submitLabel}
       </button>
 
       {submitStatus === "success" ? (
         <p className="mt-4 text-sm text-zinc-700" role="status">
-          Thanks — we received your Roof Condition Report request. We’ll reply within 24 hours.
+          {successMessage}
         </p>
       ) : null}
 
