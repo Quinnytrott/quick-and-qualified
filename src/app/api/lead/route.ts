@@ -3,6 +3,10 @@ import { FieldValue } from "firebase-admin/firestore";
 import { Resend } from "resend";
 import { getDb, getStorageBucket } from "@/lib/firebaseAdmin";
 import { buildLeadViewerUrl } from "@/lib/leadViewer";
+import {
+  forwardLeadToMeasureAgent,
+  type MeasureAgentForwardResult,
+} from "@/lib/measureAgentLeadIntake";
 
 export const runtime = "nodejs";
 const LEAD_NOTIFICATION_TO = "info@quickandqualified.ca";
@@ -25,6 +29,14 @@ type LeadPayload = {
   email: string;
   phone: string;
   address: string;
+  formattedAddress: string;
+  streetNumber: string;
+  streetName: string;
+  city: string;
+  province: string;
+  postalCode: string;
+  placeId: string;
+  addressSource: string;
   jobType: string;
   notes: string;
   source: string;
@@ -193,6 +205,31 @@ async function sendLeadNotification(params: {
   return data?.id ?? null;
 }
 
+function buildMeasureAgentForwardUpdate(result: MeasureAgentForwardResult): Record<string, unknown> {
+  return {
+    measureAgentForwardStatus: result.status,
+    measureAgentForwardAttemptedAt: FieldValue.serverTimestamp(),
+    measureAgentForwardedAt:
+      result.status === "success" ? FieldValue.serverTimestamp() : null,
+    measureAgentLeadId: result.leadId,
+    measureAgentFollowUps: result.followUps,
+    measureAgentForwardStatusCode: result.statusCode,
+    measureAgentForwardError: result.error,
+  };
+}
+
+function logMeasureAgentForwardResult(result: MeasureAgentForwardResult) {
+  if (result.status === "success") {
+    return;
+  }
+
+  console.warn("MeasureAgent lead forwarding did not complete", {
+    status: result.status,
+    statusCode: result.statusCode,
+    error: result.error,
+  });
+}
+
 export async function POST(request: Request) {
   if (process.env.NODE_ENV === "development") {
     console.log("HAS FIREBASE?", !!process.env.FIREBASE_PROJECT_ID);
@@ -214,6 +251,14 @@ export async function POST(request: Request) {
     email: asTrimmedString(form.get("email")),
     phone: asTrimmedString(form.get("phone")),
     address: asTrimmedString(form.get("address")),
+    formattedAddress: asTrimmedString(form.get("formattedAddress")),
+    streetNumber: asTrimmedString(form.get("streetNumber")),
+    streetName: asTrimmedString(form.get("streetName")),
+    city: asTrimmedString(form.get("city")),
+    province: asTrimmedString(form.get("province")),
+    postalCode: asTrimmedString(form.get("postalCode")),
+    placeId: asTrimmedString(form.get("placeId")),
+    addressSource: asTrimmedString(form.get("addressSource")) || "manual",
     jobType: asTrimmedString(form.get("jobType")),
     notes: asTrimmedString(form.get("notes")) || asTrimmedString(form.get("message")),
     source: asTrimmedString(form.get("source")) || "q2_web_lead",
@@ -281,6 +326,13 @@ export async function POST(request: Request) {
       notificationDeliveredAt: null,
       notificationFailedAt: null,
       notificationWebhookReceivedAt: null,
+      measureAgentForwardStatus: "pending",
+      measureAgentForwardAttemptedAt: null,
+      measureAgentForwardedAt: null,
+      measureAgentLeadId: null,
+      measureAgentFollowUps: [],
+      measureAgentForwardStatusCode: null,
+      measureAgentForwardError: null,
     });
   } catch (error) {
     console.error("Failed to create lead", error);
@@ -288,6 +340,18 @@ export async function POST(request: Request) {
       { success: false, message: "Failed to save lead." },
       { status: 500 },
     );
+  }
+
+  const measureAgentForwardResult = await forwardLeadToMeasureAgent({
+    leadId: docRef.id,
+    ...lead,
+  });
+  logMeasureAgentForwardResult(measureAgentForwardResult);
+
+  try {
+    await docRef.update(buildMeasureAgentForwardUpdate(measureAgentForwardResult));
+  } catch (error) {
+    console.error("Failed to update MeasureAgent forwarding status", error);
   }
 
   let notificationStatus: LeadNotificationStatus = "pending";
