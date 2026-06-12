@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { AddressAutocompleteField } from "@/components/AddressAutocompleteField";
 import { EMAIL, JOB_TYPES, PHONE_TEL, QUOTE_FORM_COPY } from "@/lib/business";
 import { primaryButtonClass } from "@/lib/ui";
 
@@ -118,19 +119,7 @@ export function QuoteForm({
             type="email"
           />
         </div>
-        <div>
-          <label className="text-sm font-medium text-zinc-800" htmlFor="address">
-            {QUOTE_FORM_COPY.addressLabel}
-          </label>
-          <input
-            required
-            className={fieldClassName}
-            id="address"
-            name="address"
-            placeholder={QUOTE_FORM_COPY.addressPlaceholder}
-            type="text"
-          />
-        </div>
+        <AddressAutocompleteField className={fieldClassName} />
         <div className="sm:col-span-2">
           <label className="text-sm font-medium text-zinc-800" htmlFor="jobType">
             {jobTypeLabel}

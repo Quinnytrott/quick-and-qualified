@@ -314,15 +314,19 @@ export const FAQ_ITEMS: FAQItem[] = [
 export const QUOTE_FORM_COPY = {
   heading: REQUEST_QUOTE_LABEL,
   description:
-    "Share your address, contact details, and what prompted the request. Q2 will follow up to confirm fit, timing, and the next step.",
+    "Share the property address, contact details, and what prompted the request. Q2 uses the address to review the exterior and route the inspection properly.",
   nameLabel: "Name",
   namePlaceholder: "Your name",
   phoneLabel: "Phone",
   phonePlaceholder: "Your best contact number",
   emailLabel: "Email",
   emailPlaceholder: "your@email.com",
-  addressLabel: "Address",
-  addressPlaceholder: "Property address",
+  addressLabel: "Property address",
+  addressPlaceholder: "Start typing the property address",
+  addressHelpText:
+    "Enter the property address so Q2 can follow up and route the request to the right review workflow.",
+  addressAutocompleteHelpText:
+    "Select a matching address if it appears. You can still type the address manually.",
   jobTypeLabel: "Reason For Request",
   jobTypePlaceholder: "Select one",
   notesLabel: "Notes",
