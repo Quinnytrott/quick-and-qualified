@@ -2,6 +2,7 @@ import { Timestamp } from "firebase-admin/firestore";
 import { notFound } from "next/navigation";
 import { LeadActions } from "@/components/LeadActions";
 import { getDb, getStorageBucket } from "@/lib/firebaseAdmin";
+import { formatStreetAddress, type AddressSource } from "@/lib/leadAddress";
 import { buildLeadViewerUrlWithToken, verifyLeadViewerToken } from "@/lib/leadViewer";
 
 /* eslint-disable @next/next/no-img-element */
@@ -22,9 +23,21 @@ type LeadDocument = {
   phone?: string;
   email?: string;
   address?: string;
+  formattedAddress?: string;
+  streetNumber?: string;
+  streetName?: string;
+  streetAddress?: string;
+  city?: string;
+  province?: string;
+  postalCode?: string;
+  placeId?: string;
+  latitude?: number | null;
+  longitude?: number | null;
+  addressSource?: AddressSource;
   jobType?: string;
   notes?: string;
   source?: string;
+  sourceDetail?: string;
   intent?: string;
   createdAt?: Timestamp | Date | string | null;
   attachments?: LeadAttachment[];
@@ -66,6 +79,14 @@ function formatCreatedAt(value: LeadDocument["createdAt"]): string {
   }).format(date);
 }
 
+function formatCoordinates(lead: LeadDocument): string {
+  if (typeof lead.latitude !== "number" || typeof lead.longitude !== "number") {
+    return "—";
+  }
+
+  return `${lead.latitude}, ${lead.longitude}`;
+}
+
 async function getPhotoUrl(attachment: LeadAttachment): Promise<string | null> {
   try {
     if (attachment.path) {
@@ -101,6 +122,8 @@ export default async function LeadDetailPage(props: LeadPageProps) {
   }
 
   const lead = leadSnapshot.data() as LeadDocument;
+  const fullAddress = lead.formattedAddress || lead.address || "";
+  const streetAddress = lead.streetAddress || formatStreetAddress(lead);
   const attachments = Array.isArray(lead.attachments) ? lead.attachments : [];
   const viewerUrl = buildLeadViewerUrlWithToken(leadId, token);
   const photos = await Promise.all(
@@ -127,7 +150,7 @@ export default async function LeadDetailPage(props: LeadPageProps) {
           <article className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm sm:p-8">
             <h2 className="text-lg font-semibold text-zinc-900">Lead Details</h2>
             <LeadActions
-              address={lead.address || ""}
+              address={fullAddress}
               customerName={lead.name || ""}
               email={lead.email || ""}
               initialConversionStatus={lead.conversionStatus || ""}
@@ -150,8 +173,44 @@ export default async function LeadDetailPage(props: LeadPageProps) {
                 <dd className="mt-1 break-all text-sm text-zinc-900">{lead.email || "—"}</dd>
               </div>
               <div className="sm:col-span-2">
-                <dt className="text-xs font-medium uppercase tracking-[0.14em] text-zinc-500">Address</dt>
-                <dd className="mt-1 text-sm text-zinc-900">{lead.address || "—"}</dd>
+                <dt className="text-xs font-medium uppercase tracking-[0.14em] text-zinc-500">Property Address</dt>
+                <dd className="mt-1 text-sm text-zinc-900">{fullAddress || "—"}</dd>
+              </div>
+              <div>
+                <dt className="text-xs font-medium uppercase tracking-[0.14em] text-zinc-500">Address Source</dt>
+                <dd className="mt-1 text-sm text-zinc-900">{lead.addressSource || "manual"}</dd>
+              </div>
+              <div>
+                <dt className="text-xs font-medium uppercase tracking-[0.14em] text-zinc-500">Street Address</dt>
+                <dd className="mt-1 text-sm text-zinc-900">{streetAddress || "—"}</dd>
+              </div>
+              <div>
+                <dt className="text-xs font-medium uppercase tracking-[0.14em] text-zinc-500">Street Number</dt>
+                <dd className="mt-1 text-sm text-zinc-900">{lead.streetNumber || "—"}</dd>
+              </div>
+              <div>
+                <dt className="text-xs font-medium uppercase tracking-[0.14em] text-zinc-500">Street Name</dt>
+                <dd className="mt-1 text-sm text-zinc-900">{lead.streetName || "—"}</dd>
+              </div>
+              <div>
+                <dt className="text-xs font-medium uppercase tracking-[0.14em] text-zinc-500">Town / City</dt>
+                <dd className="mt-1 text-sm text-zinc-900">{lead.city || "—"}</dd>
+              </div>
+              <div>
+                <dt className="text-xs font-medium uppercase tracking-[0.14em] text-zinc-500">Province</dt>
+                <dd className="mt-1 text-sm text-zinc-900">{lead.province || "—"}</dd>
+              </div>
+              <div>
+                <dt className="text-xs font-medium uppercase tracking-[0.14em] text-zinc-500">Postal Code</dt>
+                <dd className="mt-1 text-sm text-zinc-900">{lead.postalCode || "—"}</dd>
+              </div>
+              <div>
+                <dt className="text-xs font-medium uppercase tracking-[0.14em] text-zinc-500">Place ID</dt>
+                <dd className="mt-1 break-all text-sm text-zinc-900">{lead.placeId || "—"}</dd>
+              </div>
+              <div>
+                <dt className="text-xs font-medium uppercase tracking-[0.14em] text-zinc-500">Coordinates</dt>
+                <dd className="mt-1 text-sm text-zinc-900">{formatCoordinates(lead)}</dd>
               </div>
               <div>
                 <dt className="text-xs font-medium uppercase tracking-[0.14em] text-zinc-500">Job Type</dt>
@@ -160,6 +219,10 @@ export default async function LeadDetailPage(props: LeadPageProps) {
               <div>
                 <dt className="text-xs font-medium uppercase tracking-[0.14em] text-zinc-500">Lead Source</dt>
                 <dd className="mt-1 text-sm text-zinc-900">{lead.source || "—"}</dd>
+              </div>
+              <div>
+                <dt className="text-xs font-medium uppercase tracking-[0.14em] text-zinc-500">Source Detail</dt>
+                <dd className="mt-1 text-sm text-zinc-900">{lead.sourceDetail || "—"}</dd>
               </div>
               <div>
                 <dt className="text-xs font-medium uppercase tracking-[0.14em] text-zinc-500">Intent</dt>

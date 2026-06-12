@@ -2,7 +2,12 @@ import { NextResponse } from "next/server";
 import { FieldValue } from "firebase-admin/firestore";
 import { Resend } from "resend";
 import { getDb, getStorageBucket } from "@/lib/firebaseAdmin";
+import { buildLeadAddressDetails, type AddressSource } from "@/lib/leadAddress";
 import { buildLeadViewerUrl } from "@/lib/leadViewer";
+import {
+  forwardLeadToMeasureAgent,
+  type MeasureAgentForwardResult,
+} from "@/lib/measureAgentLeadIntake";
 
 export const runtime = "nodejs";
 const LEAD_NOTIFICATION_TO = "info@quickandqualified.ca";
@@ -25,9 +30,21 @@ type LeadPayload = {
   email: string;
   phone: string;
   address: string;
+  formattedAddress: string;
+  streetNumber: string;
+  streetName: string;
+  streetAddress: string;
+  city: string;
+  province: string;
+  postalCode: string;
+  placeId: string;
+  latitude: number | null;
+  longitude: number | null;
+  addressSource: AddressSource;
   jobType: string;
   notes: string;
   source: string;
+  sourceDetail: string;
   intent: string;
 };
 
@@ -57,6 +74,10 @@ function escapeHtml(value: string): string {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
+}
+
+function escapeOptional(value: string | number | null | undefined): string {
+  return escapeHtml(value === null || value === undefined || value === "" ? "—" : String(value));
 }
 
 function toErrorMessage(error: unknown): string {
@@ -139,8 +160,18 @@ async function sendLeadNotification(params: {
       <tr><td><strong>Phone</strong></td><td>${escapeHtml(lead.phone)}</td></tr>
       <tr><td><strong>Email</strong></td><td>${escapeHtml(lead.email)}</td></tr>
       <tr><td><strong>Address</strong></td><td>${escapeHtml(lead.address)}</td></tr>
+      <tr><td><strong>Address Source</strong></td><td>${escapeHtml(lead.addressSource)}</td></tr>
+      <tr><td><strong>Street Number</strong></td><td>${escapeOptional(lead.streetNumber)}</td></tr>
+      <tr><td><strong>Street Name</strong></td><td>${escapeOptional(lead.streetName)}</td></tr>
+      <tr><td><strong>Town / City</strong></td><td>${escapeOptional(lead.city)}</td></tr>
+      <tr><td><strong>Province</strong></td><td>${escapeOptional(lead.province)}</td></tr>
+      <tr><td><strong>Postal Code</strong></td><td>${escapeOptional(lead.postalCode)}</td></tr>
+      <tr><td><strong>Place ID</strong></td><td>${escapeOptional(lead.placeId)}</td></tr>
+      <tr><td><strong>Latitude</strong></td><td>${escapeOptional(lead.latitude)}</td></tr>
+      <tr><td><strong>Longitude</strong></td><td>${escapeOptional(lead.longitude)}</td></tr>
       <tr><td><strong>Reason For Request</strong></td><td>${escapeHtml(lead.jobType)}</td></tr>
       <tr><td><strong>Source</strong></td><td>${escapeHtml(lead.source)}</td></tr>
+      <tr><td><strong>Source Detail</strong></td><td>${escapeHtml(lead.sourceDetail)}</td></tr>
       <tr><td><strong>Intent</strong></td><td>${escapeHtml(lead.intent)}</td></tr>
       <tr><td><strong>Message</strong></td><td>${escapeHtml(lead.notes || "—")}</td></tr>
       <tr><td><strong>Photos Uploaded</strong></td><td>${escapeHtml(photosSummary)}</td></tr>
@@ -165,8 +196,18 @@ async function sendLeadNotification(params: {
     `Phone: ${lead.phone}`,
     `Email: ${lead.email}`,
     `Address: ${lead.address}`,
+    `Address Source: ${lead.addressSource}`,
+    `Street Number: ${lead.streetNumber || "—"}`,
+    `Street Name: ${lead.streetName || "—"}`,
+    `Town / City: ${lead.city || "—"}`,
+    `Province: ${lead.province || "—"}`,
+    `Postal Code: ${lead.postalCode || "—"}`,
+    `Place ID: ${lead.placeId || "—"}`,
+    `Latitude: ${lead.latitude ?? "—"}`,
+    `Longitude: ${lead.longitude ?? "—"}`,
     `Reason For Request: ${lead.jobType}`,
     `Source: ${lead.source}`,
+    `Source Detail: ${lead.sourceDetail}`,
     `Intent: ${lead.intent}`,
     `Message: ${lead.notes || "—"}`,
     `Photos Uploaded: ${photosSummary}`,
@@ -193,6 +234,31 @@ async function sendLeadNotification(params: {
   return data?.id ?? null;
 }
 
+function buildMeasureAgentForwardUpdate(result: MeasureAgentForwardResult): Record<string, unknown> {
+  return {
+    measureAgentForwardStatus: result.status,
+    measureAgentForwardAttemptedAt: FieldValue.serverTimestamp(),
+    measureAgentForwardedAt:
+      result.status === "success" ? FieldValue.serverTimestamp() : null,
+    measureAgentLeadId: result.leadId,
+    measureAgentFollowUps: result.followUps,
+    measureAgentForwardStatusCode: result.statusCode,
+    measureAgentForwardError: result.error,
+  };
+}
+
+function logMeasureAgentForwardResult(result: MeasureAgentForwardResult) {
+  if (result.status === "success") {
+    return;
+  }
+
+  console.warn("MeasureAgent lead forwarding did not complete", {
+    status: result.status,
+    statusCode: result.statusCode,
+    error: result.error,
+  });
+}
+
 export async function POST(request: Request) {
   if (process.env.NODE_ENV === "development") {
     console.log("HAS FIREBASE?", !!process.env.FIREBASE_PROJECT_ID);
@@ -209,22 +275,37 @@ export async function POST(request: Request) {
     );
   }
 
+  const addressDetails = buildLeadAddressDetails({
+    address: asTrimmedString(form.get("address")),
+    formattedAddress: asTrimmedString(form.get("formattedAddress")),
+    streetNumber: asTrimmedString(form.get("streetNumber")),
+    streetName: asTrimmedString(form.get("streetName")),
+    city: asTrimmedString(form.get("city")),
+    province: asTrimmedString(form.get("province")),
+    postalCode: asTrimmedString(form.get("postalCode")),
+    placeId: asTrimmedString(form.get("placeId")),
+    latitude: asTrimmedString(form.get("latitude")),
+    longitude: asTrimmedString(form.get("longitude")),
+    addressSource: asTrimmedString(form.get("addressSource")),
+  });
+  const submittedSource = asTrimmedString(form.get("source"));
   const lead: LeadPayload = {
     name: asTrimmedString(form.get("name")),
     email: asTrimmedString(form.get("email")),
     phone: asTrimmedString(form.get("phone")),
-    address: asTrimmedString(form.get("address")),
+    ...addressDetails,
     jobType: asTrimmedString(form.get("jobType")),
     notes: asTrimmedString(form.get("notes")) || asTrimmedString(form.get("message")),
-    source: asTrimmedString(form.get("source")) || "q2_web_lead",
+    source: "website",
+    sourceDetail: submittedSource || "q2_web_lead",
     intent: asTrimmedString(form.get("intent")) || "q2_exterior_report_request",
   };
 
   const files = form.getAll("files");
 
-  const missing = (
-    ["name", "email", "phone", "address", "jobType"] as const
-  ).filter((field) => !lead[field]);
+  const missing = (["name", "email", "phone", "address", "jobType"] as const).filter(
+    (field) => !lead[field],
+  );
 
   if (missing.length > 0) {
     return NextResponse.json(
@@ -281,6 +362,13 @@ export async function POST(request: Request) {
       notificationDeliveredAt: null,
       notificationFailedAt: null,
       notificationWebhookReceivedAt: null,
+      measureAgentForwardStatus: "pending",
+      measureAgentForwardAttemptedAt: null,
+      measureAgentForwardedAt: null,
+      measureAgentLeadId: null,
+      measureAgentFollowUps: [],
+      measureAgentForwardStatusCode: null,
+      measureAgentForwardError: null,
     });
   } catch (error) {
     console.error("Failed to create lead", error);
@@ -288,6 +376,18 @@ export async function POST(request: Request) {
       { success: false, message: "Failed to save lead." },
       { status: 500 },
     );
+  }
+
+  const measureAgentForwardResult = await forwardLeadToMeasureAgent({
+    leadId: docRef.id,
+    ...lead,
+  });
+  logMeasureAgentForwardResult(measureAgentForwardResult);
+
+  try {
+    await docRef.update(buildMeasureAgentForwardUpdate(measureAgentForwardResult));
+  } catch (error) {
+    console.error("Failed to update MeasureAgent forwarding status", error);
   }
 
   let notificationStatus: LeadNotificationStatus = "pending";

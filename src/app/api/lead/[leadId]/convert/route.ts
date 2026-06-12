@@ -24,6 +24,17 @@ type LeadDocument = {
   phone?: string;
   email?: string;
   address?: string;
+  formattedAddress?: string;
+  streetNumber?: string;
+  streetName?: string;
+  streetAddress?: string;
+  city?: string;
+  province?: string;
+  postalCode?: string;
+  placeId?: string;
+  latitude?: number | null;
+  longitude?: number | null;
+  addressSource?: string;
   jobType?: string;
   notes?: string;
   source?: string;
@@ -60,13 +71,13 @@ function buildProjectId(leadId: string): string {
   return `q2-${leadId}`;
 }
 
-function trimOrNull(value: string | undefined): string | null {
+function trimOrNull(value: string | null | undefined): string | null {
   const trimmed = value?.trim();
   return trimmed ? trimmed : null;
 }
 
 function buildProjectTitle(lead: LeadDocument, leadId: string): string {
-  return trimOrNull(lead.address) || trimOrNull(lead.name) || `Q2 Lead ${leadId}`;
+  return trimOrNull(lead.formattedAddress) || trimOrNull(lead.address) || trimOrNull(lead.name) || `Q2 Lead ${leadId}`;
 }
 
 function buildContactPhone(lead: LeadDocument): string | null {
@@ -98,6 +109,29 @@ function buildPrimaryScope(jobType: string | undefined): string {
   if (scopes.siding) return "siding";
   if (scopes.soffitFascia) return "soffitFascia";
   return "roof";
+}
+
+function buildMeasureAgentAddress(lead: LeadDocument) {
+  const line1 = trimOrNull(lead.formattedAddress) || trimOrNull(lead.address);
+
+  if (!line1) {
+    return null;
+  }
+
+  return {
+    line1,
+    formattedAddress: trimOrNull(lead.formattedAddress),
+    streetNumber: trimOrNull(lead.streetNumber),
+    streetName: trimOrNull(lead.streetName),
+    streetAddress: trimOrNull(lead.streetAddress),
+    city: trimOrNull(lead.city),
+    province: trimOrNull(lead.province),
+    postalCode: trimOrNull(lead.postalCode),
+    placeId: trimOrNull(lead.placeId),
+    latitude: typeof lead.latitude === "number" ? lead.latitude : null,
+    longitude: typeof lead.longitude === "number" ? lead.longitude : null,
+    source: trimOrNull(lead.addressSource) || "manual",
+  };
 }
 
 function buildSupportingPhotos(
@@ -158,7 +192,8 @@ export async function POST(request: NextRequest, context: RouteContext) {
   const firstPhotoUrl = supportingPhotos[0]?.downloadURL || null;
   const projectTitle = buildProjectTitle(lead, leadId);
   const customerName = trimOrNull(lead.name);
-  const propertyAddress = trimOrNull(lead.address);
+  const measureAgentAddress = buildMeasureAgentAddress(lead);
+  const propertyAddress = measureAgentAddress?.line1 || null;
   const customerEmail = trimOrNull(lead.email);
   const contactPhone = buildContactPhone(lead);
   const now = FieldValue.serverTimestamp();
@@ -197,7 +232,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
           captureType: "mobile",
           title: projectTitle,
           name: projectTitle,
-          address: propertyAddress ? { line1: propertyAddress } : null,
+          address: measureAgentAddress,
           customerName,
           propertyAddress,
           contactInfo: contactPhone,
@@ -235,6 +270,9 @@ export async function POST(request: NextRequest, context: RouteContext) {
             source: trimOrNull(lead.source) || "q2_lead",
             intent: trimOrNull(lead.intent),
             jobType: trimOrNull(lead.jobType),
+            address: measureAgentAddress,
+            addressSource: trimOrNull(lead.addressSource) || "manual",
+            placeId: trimOrNull(lead.placeId),
             notes: trimOrNull(lead.notes),
             attachments: supportingPhotos.map((photo) => ({
               id: photo.id,
